@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "Sven - Markdown Viewer",
+  "version": "1.0.0",
+  "description": "Advanced markdown file viewer with enhanced rendering, outline navigation, and file browsing",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "file:///*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "file:///*.md",
+        "file:///*.markdown",
+        "file:///*.mdown"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css", "style.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "content.css",
+        "style.css",
+        "icons/*"
+      ],
+      "matches": ["file:///*"]
+    }
+  ]
+}
