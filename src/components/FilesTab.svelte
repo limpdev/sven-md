@@ -1,55 +1,59 @@
 <script>
-  import { createEventDispatcher } from 'svelte';
-  
-  export let directoryFiles = [];
-  export let currentFile = '';
-  
+  import { createEventDispatcher } from "svelte";
+
+  // Renamed from directoryFiles to recentFiles to reflect reality
+  export let recentFiles = [];
+  export let currentFile = "";
+
   const dispatch = createEventDispatcher();
-  
+
   function selectFile(filepath) {
-    dispatch('fileselect', filepath);
+    dispatch("fileselect", filepath);
   }
-  
+
+  function clearHistory() {
+    if (chrome && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.set({ recents: [] });
+    }
+  }
+
   function getFileName(path) {
-    return path.split('/').pop();
-  }
-  
-  function isCurrentFile(filepath) {
-    return filepath === currentFile || getFileName(filepath) === getFileName(currentFile);
-  }
-  
-  function getFileIcon(filename) {
-    const ext = filename.split('.').pop().toLowerCase();
-    if (ext === 'md' || ext === 'markdown') return 'fa-file-lines';
-    if (ext === 'mdown') return 'fa-file-lines';
-    return 'fa-file';
+    // If we have a stored name property use it, otherwise parse path
+    return path.split("/").pop() || path;
   }
 </script>
 
 <div class="files-tab">
-  {#if directoryFiles.length === 0}
+  <div class="info-box">
+    <i class="fas fa-info-circle"></i>
+    <p>
+      Browser security prevents scanning local folders. Showing recently visited
+      files instead.
+    </p>
+  </div>
+
+  {#if recentFiles.length === 0}
     <div class="empty-state">
-      <i class="fas fa-folder-open"></i>
-      <p>No markdown files found in this directory</p>
+      <i class="fas fa-history"></i>
+      <p>No recent files</p>
     </div>
   {:else}
     <div class="files-header">
-      <span class="file-count">{directoryFiles.length} file{directoryFiles.length !== 1 ? 's' : ''}</span>
+      <span class="file-count">Recent</span>
+      <button class="clear-btn" on:click={clearHistory}>Clear</button>
     </div>
+
     <ul class="files-list">
-      {#each directoryFiles as file}
+      {#each recentFiles as file}
         <li class="file-item">
-          <button 
+          <button
             class="file-link"
-            class:active={isCurrentFile(file)}
-            on:click={() => selectFile(file)}
-            title={getFileName(file)}
+            class:active={file.path === currentFile}
+            on:click={() => selectFile(file.path)}
+            title={file.path}
           >
-            <i class="fas {getFileIcon(file)} file-icon"></i>
-            <span class="file-name">{getFileName(file)}</span>
-            {#if isCurrentFile(file)}
-              <i class="fas fa-check current-indicator"></i>
-            {/if}
+            <i class="fas fa-file-alt file-icon"></i>
+            <span class="file-name">{file.name}</span>
           </button>
         </li>
       {/each}
@@ -58,103 +62,89 @@
 </div>
 
 <style>
-  ::webkit-scrollbar {
-    display: none;
-  }
-
   .files-tab {
     padding: 16px;
   }
-  
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: #999;
-  }
-  
-  .empty-state i {
-    font-size: 48px;
+
+  .info-box {
+    background: rgba(56, 139, 253, 0.1);
+    border: 1px solid rgba(56, 139, 253, 0.4);
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
     margin-bottom: 16px;
-    opacity: 0.5;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
   }
-  
-  .empty-state p {
-    margin: 0;
-    font-size: 14px;
-  }
-  
+
   .files-header {
-    padding: 8px 12px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
   }
-  
+
   .file-count {
     font-size: 12px;
-    color: #666;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
     font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
   }
-  
+
+  .clear-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .clear-btn:hover {
+    color: #f85149;
+  }
+
   .files-list {
     list-style: none;
     padding: 0;
     margin: 0;
   }
-  
-  .file-item {
-    margin: 0;
-  }
-  
+
   .file-link {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
+    gap: 10px;
+    padding: 8px;
     width: 100%;
     background: transparent;
     border: none;
     text-align: left;
     cursor: pointer;
     border-radius: 6px;
-    transition: all 0.2s ease;
-    color: #333;
-    font-size: 14px;
-    position: relative;
+    color: var(--text-primary);
   }
-  
+
   .file-link:hover {
-    background: #f5f5f5;
+    background: var(--bg-block);
   }
-  
   .file-link.active {
-    background: #e6f2ff;
-    color: #0066cc;
-    font-weight: 500;
+    background: rgba(56, 139, 253, 0.15);
+    color: var(--text-link);
   }
-  
-  .file-icon {
-    flex-shrink: 0;
-    width: 16px;
-    color: #0066cc;
-    opacity: 0.7;
-  }
-  
-  .file-link.active .file-icon {
-    opacity: 1;
-  }
-  
+
   .file-name {
-    flex: 1;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    font-size: 14px;
   }
-  
-  .current-indicator {
-    flex-shrink: 0;
-    font-size: 12px;
-    color: #0066cc;
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 0;
+    color: var(--text-secondary);
+    opacity: 0.7;
   }
 </style>

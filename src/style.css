@@ -1,0 +1,321 @@
+:root {
+  --font-sans: "Aptos Nerd Font", sans-serif;
+  --font-mono: "AptosMono Nerd Font", monospace;
+
+  /* Theme Colors (Dark Mode) */
+  --bg-body: #0d1117;
+  --bg-sidebar: #010409;
+  --bg-block: #161b22;
+  --bg-code: #161b22;
+  /* distinct from block if needed */
+
+  --text-primary: #c9d1d9;
+  --text-secondary: #8b949e;
+  --text-link: #58a6ff;
+  --text-link-hover: #79c0ff;
+
+  --border-color: #30363d00;
+  --border-light: rgba(240, 246, 252, 0);
+
+  /* Syntax Highlighting Colors (GitHub Dark Dimmed style) */
+  --hl-keyword: #ff7b72;
+  /* Red/Pink */
+  --hl-function: #d2a8ff;
+  /* Purple */
+  --hl-string: #a5d6ff;
+  /* Light Blue */
+  --hl-variable: #79c0ff;
+  /* Blue */
+  --hl-tag: #7ee787;
+  /* Green */
+  --hl-comment: #8b949e;
+  /* Grey */
+  --hl-constant: #79c0ff;
+  /* Blue */
+  --hl-number: #79c0ff;
+  --hl-attr: #79c0ff;
+
+  --shadow-medium: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+}
+
+/* Global Reset & Typography */
+* {
+  box-sizing: border-box;
+  text-rendering: optimizeLegibility;
+  letter-spacing: 0.05px;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-body);
+}
+
+/* --- Markdown Content Area --- */
+#markdown-content-container {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 48px 32px;
+}
+
+/* Headings */
+#markdown-content-container h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #e6edf3;
+}
+
+#markdown-content-container h1 {
+  font-size: 2em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.3em;
+}
+
+#markdown-content-container h2 {
+  font-size: 1.5em;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.3em;
+}
+
+/* Links */
+#markdown-content-container a {
+  color: var(--text-link);
+  text-decoration: none;
+}
+
+#markdown-content-container a:hover {
+  text-decoration: none;
+  color: var(--text-link-hover);
+}
+
+/* Paragraphs & Lists */
+#markdown-content-container p {
+  margin-bottom: 16px;
+}
+
+#markdown-content-container ul,
+#markdown-content-container ol {
+  padding-left: 2em;
+  margin-bottom: 16px;
+}
+
+#markdown-content-container li+li {
+  margin-top: 0.25em;
+}
+
+/* Blockquotes */
+#markdown-content-container blockquote {
+  margin: 0 0 16px;
+  padding: 0 1em;
+  color: var(--text-secondary);
+  border-left: 0.25em solid var(--border-color);
+  font-style: italic;
+}
+
+/* Tables */
+#markdown-content-container table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+#markdown-content-container th,
+#markdown-content-container td {
+  padding: 6px 13px;
+  border: 1px solid var(--border-color);
+}
+
+#markdown-content-container tr:nth-child(2n) {
+  background-color: var(--bg-block);
+}
+
+/* Images */
+#markdown-content-container img {
+  max-width: 100%;
+  box-sizing: content-box;
+  background-color: #fff;
+  /* Ensure transparent PNGs are visible */
+  border-radius: 6px;
+}
+
+/* --- Code & Syntax Highlighting --- */
+
+/* Inline Code */
+#markdown-content-container code {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(44, 44, 44, 0.4);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+}
+
+/* Code Blocks */
+#markdown-content-container pre {
+  padding: 20px;
+  overflow: auto;
+  font-size: 87%;
+  line-height: 1.45;
+  background-color: var(--bg-block);
+  border-radius: 9px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-color);
+  position: relative;
+  /* Context for copy button */
+}
+
+#markdown-content-container pre code {
+  display: inline;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: transparent;
+  border: 0;
+}
+
+/* Highlight.js Syntax Theme (Custom Mapping) */
+.hljs-comment,
+.hljs-quote {
+  color: var(--hl-comment);
+  font-style: italic;
+}
+
+.hljs-doctag,
+.hljs-keyword,
+.hljs-formula {
+  color: var(--hl-keyword);
+}
+
+.hljs-section,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-deletion,
+.hljs-subst {
+  color: var(--hl-keyword);
+}
+
+.hljs-literal {
+  color: var(--hl-constant);
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta .hljs-string {
+  color: var(--hl-string);
+}
+
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-number {
+  color: var(--hl-variable);
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-title {
+  color: var(--hl-function);
+}
+
+.hljs-built_in,
+.hljs-title.class_,
+.hljs-class .hljs-title {
+  color: var(--hl-constant);
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+/* Language Icons */
+pre.has-language {
+  padding-top: 32px !important;
+}
+
+.language-icon {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+/* Copy Button */
+.copy-code-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  opacity: 0;
+}
+
+pre:hover .copy-code-button {
+  opacity: 1;
+}
+
+.copy-code-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.copy-code-button.copied {
+  border-color: var(--hl-tag);
+  color: var(--hl-tag);
+}
+
+/* --- Admonitions --- */
+.admonition {
+  padding: 16px;
+  margin-bottom: 16px;
+  border-left: 4px solid;
+  border-radius: 6px;
+  background-color: var(--bg-block);
+}
+
+.admonition-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.admonition-content {
+  margin-left: 0;
+}

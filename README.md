@@ -48,18 +48,18 @@ A modern Chrome extension built with Svelte that renders local markdown files wi
 1. **Clone or download the extension files**
 2. **Install dependencies**
 
-   ```bash
+   ```shell
    npm install
    ```
 3. **Build the extension**
 
-   ```bash
+   ```shell
    npm run build
    ```
 
    For development with auto-rebuild:
 
-   ```bash
+   ```shell
    npm run dev
    ```
 4. **Load the extension in Chrome**

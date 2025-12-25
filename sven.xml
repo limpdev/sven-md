@@ -1,10 +1,11 @@
-This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+This file is a merged representation of a subset of the codebase, containing specifically included files and files not matching ignore patterns, combined into a single document by Repomix.
+The content has been processed where empty lines have been removed.
 
 <file_summary>
 This section contains a summary of this file.
 
 <purpose>
-This file contains a packed representation of the entire repository's contents.
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
 It is designed to be easily consumable by AI systems for analysis, code review,
 or other automated processes.
 </purpose>
@@ -32,1279 +33,188 @@ The content is organized as follows:
 <notes>
 - Some files may have been excluded based on .gitignore rules and Repomix's configuration
 - Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: **/*.go, **/*.js, **/*.ts, **/*.css, **/*.html, **/*.yaml, **/*.toml, **/*.xml, **/*.bat, **/*.sh, **/*.py, **/*.md, **/*.js, **/*.json, **/*svelte
+- Files matching these patterns are excluded: node_modules, **/node_modules, **/.venv/**, **/venv/**, **/*.md
 - Files matching patterns in .gitignore are excluded
 - Files matching default ignore patterns are excluded
+- Empty lines have been removed from all files
+- Long base64 data strings (e.g., data:image/png;base64,...) have been truncated to reduce token count
 - Files are sorted by Git change count (files with more changes are at the bottom)
 </notes>
 
 </file_summary>
 
 <directory_structure>
-icons/
-  icon128.png
-  icon16.png
-  icon48.png
 src/
-  components/
-    FilesTab.svelte
-    MarkdownRenderer.svelte
-    OutlineTab.svelte
-    Sidebar.svelte
-  App.svelte
-  main.js
+src/components/
+.gitignore
+LICENSE
 manifest.json
 package.json
-README copy.md
-README.md
+repo_2025-12-25T02_12.xml
 rollup.config.js
+src/App.svelte
+src/components/FilesTab.svelte
+src/components/MarkdownRenderer.svelte
+src/components/OutlineTab.svelte
+src/components/Sidebar.svelte
+src/main.js
 style.css
-sven.xml
 </directory_structure>
 
 <files>
 This section contains the contents of the repository's files.
 
-<file path="src/components/FilesTab.svelte">
-<script>
-  import { createEventDispatcher } from 'svelte';
-  
-  export let directoryFiles = [];
-  export let currentFile = '';
-  
-  const dispatch = createEventDispatcher();
-  
-  function selectFile(filepath) {
-    dispatch('fileselect', filepath);
-  }
-  
-  function getFileName(path) {
-    return path.split('/').pop();
-  }
-  
-  function isCurrentFile(filepath) {
-    return filepath === currentFile || getFileName(filepath) === getFileName(currentFile);
-  }
-  
-  function getFileIcon(filename) {
-    const ext = filename.split('.').pop().toLowerCase();
-    if (ext === 'md' || ext === 'markdown') return 'fa-file-lines';
-    if (ext === 'mdown') return 'fa-file-lines';
-    return 'fa-file';
-  }
-</script>
-
-<div class="files-tab">
-  {#if directoryFiles.length === 0}
-    <div class="empty-state">
-      <i class="fas fa-folder-open"></i>
-      <p>No markdown files found in this directory</p>
-    </div>
-  {:else}
-    <div class="files-header">
-      <span class="file-count">{directoryFiles.length} file{directoryFiles.length !== 1 ? 's' : ''}</span>
-    </div>
-    <ul class="files-list">
-      {#each directoryFiles as file}
-        <li class="file-item">
-          <button 
-            class="file-link"
-            class:active={isCurrentFile(file)}
-            on:click={() => selectFile(file)}
-            title={getFileName(file)}
-          >
-            <i class="fas {getFileIcon(file)} file-icon"></i>
-            <span class="file-name">{getFileName(file)}</span>
-            {#if isCurrentFile(file)}
-              <i class="fas fa-check current-indicator"></i>
-            {/if}
-          </button>
-        </li>
-      {/each}
-    </ul>
-  {/if}
-</div>
-
-<style>
-  .files-tab {
-    padding: 16px;
-  }
-  
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: #999;
-  }
-  
-  .empty-state i {
-    font-size: 48px;
-    margin-bottom: 16px;
-    opacity: 0.5;
-  }
-  
-  .empty-state p {
-    margin: 0;
-    font-size: 14px;
-  }
-  
-  .files-header {
-    padding: 8px 12px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid #e0e0e0;
-  }
-  
-  .file-count {
-    font-size: 12px;
-    color: #666;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 600;
-  }
-  
-  .files-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .file-item {
-    margin: 0;
-  }
-  
-  .file-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
-    width: 100%;
-    background: transparent;
-    border: none;
-    text-align: left;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    color: #333;
-    font-size: 14px;
-    position: relative;
-  }
-  
-  .file-link:hover {
-    background: #f5f5f5;
-  }
-  
-  .file-link.active {
-    background: #e6f2ff;
-    color: #0066cc;
-    font-weight: 500;
-  }
-  
-  .file-icon {
-    flex-shrink: 0;
-    width: 16px;
-    color: #0066cc;
-    opacity: 0.7;
-  }
-  
-  .file-link.active .file-icon {
-    opacity: 1;
-  }
-  
-  .file-name {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  .current-indicator {
-    flex-shrink: 0;
-    font-size: 12px;
-    color: #0066cc;
-  }
-</style>
-</file>
-
-<file path="src/components/MarkdownRenderer.svelte">
-<script>
-  import { onMount, createEventDispatcher } from 'svelte';
-  
-  export let markdownContent = '';
-  
-  const dispatch = createEventDispatcher();
-  let contentContainer;
-  let isProcessing = true;
-  let errorMessage = null;
-  
-  // Language to Font Awesome icon mapping
-  const languageIcons = {
-    javascript: "fab fa-js-square",
-    js: "fab fa-js-square",
-    typescript: "fab fa-js-square",
-    ts: "fab fa-js-square",
-    python: "fab fa-python",
-    py: "fab fa-python",
-    java: "fab fa-java",
-    php: "fab fa-php",
-    html: "fab fa-html5",
-    css: "fab fa-css3-alt",
-    scss: "fab fa-sass",
-    sass: "fab fa-sass",
-    less: "fab fa-less",
-    react: "fab fa-react",
-    jsx: "fab fa-react",
-    vue: "fab fa-vuejs",
-    angular: "fab fa-angular",
-    node: "fab fa-node-js",
-    nodejs: "fab fa-node-js",
-    npm: "fab fa-npm",
-    yarn: "fab fa-yarn",
-    docker: "fab fa-docker",
-    git: "fab fa-git-alt",
-    github: "fab fa-github",
-    gitlab: "fab fa-gitlab",
-    bitbucket: "fab fa-bitbucket",
-    go: "fas fa-code",
-    golang: "fas fa-code",
-    rust: "fas fa-cog",
-    cpp: "fas fa-code",
-    "c++": "fas fa-code",
-    c: "fas fa-code",
-    csharp: "fas fa-code",
-    "c#": "fas fa-code",
-    swift: "fab fa-swift",
-    kotlin: "fas fa-code",
-    ruby: "fas fa-gem",
-    rb: "fas fa-gem",
-    shell: "fas fa-terminal",
-    bash: "fas fa-terminal",
-    sh: "fas fa-terminal",
-    powershell: "fas fa-terminal",
-    sql: "fas fa-database",
-    mysql: "fas fa-database",
-    postgresql: "fas fa-database",
-    mongodb: "fas fa-database",
-    json: "fas fa-file-code",
-    xml: "fas fa-code",
-    yaml: "fas fa-file-code",
-    yml: "fas fa-file-code",
-    toml: "fas fa-file-code",
-    ini: "fas fa-file-code",
-    markdown: "fab fa-markdown",
-    md: "fab fa-markdown",
-    text: "fas fa-file-alt",
-    txt: "fas fa-file-alt",
-    default: "fas fa-code",
-  };
-  
-  onMount(async () => {
-    await processMarkdown();
-    await discoverDirectoryFiles();
-  });
-  
-  async function processMarkdown() {
-    try {
-      if (!markdownContent) {
-        errorMessage = "No markdown content found";
-        isProcessing = false;
-        return;
-      }
-      
-      // Load all required modules
-      const modules = await loadModules();
-      
-      // Process markdown
-      const processor = modules.unified()
-        .use(modules.remarkParse)
-        .use(modules.remarkGfm)
-        .use(modules.remarkFrontmatter, ["yaml", "toml"])
-        .use(modules.remarkGithubAdmonitionsToDirectives)
-        .use(modules.remarkDirective)
-        .use(modules.remarkToc, { heading: "toc|table[ -]of[ -]contents" })
-        .use(modules.sectionize)
-        .use(modules.remarkTextr, { plugins: [ellipses] })
-        .use(modules.a11yEmoji)
-        .use(modules.remarkIns)
-        .use(modules.remarkSupersub)
-        .use(modules.remarkRehype, { allowDangerousHtml: true })
-        .use(modules.rehypeSlug)
-        .use(modules.rehypeAutolinkHeadings, {
-          behavior: "prepend",
-          properties: { className: ["heading-anchor-link"] },
-          content: { type: "text", value: "#" },
-        })
-        .use(modules.rehypeHighlight)
-        .use(rehypeCodeLanguageIcons)
-        .use(rehypeAdmonitions)
-        .use(modules.rehypeStringify, { allowDangerousHtml: true });
-      
-      const file = await processor.process(markdownContent);
-      const renderedHtml = String(file);
-      
-      // Extract document outline
-      extractDocumentOutline();
-      
-      dispatch('rendered', renderedHtml);
-      isProcessing = false;
-      
-      // Wait for DOM update then add interactive features
-      setTimeout(() => {
-        addCodeCopyButtons();
-        applyTextTransformations();
-      }, 100);
-      
-    } catch (error) {
-      console.error("Error rendering markdown:", error);
-      errorMessage = error.message;
-      isProcessing = false;
-    }
-  }
-  
-  async function loadModules() {
-    try {
-      const modules = await Promise.all([
-        import("unified"),
-        import("remark-parse"),
-        import("remark-gfm"),
-        import("remark-rehype"),
-        import("rehype-highlight"),
-        import("rehype-stringify"),
-        import("@fec/remark-a11y-emoji"),
-        import("remark-frontmatter"),
-        import("remark-directive"),
-        import("remark-textr"),
-        import("remark-toc"),
-        import("remark-sectionize"),
-        import("remark-ins"),
-        import("remark-supersub"),
-        import("rehype-slug"),
-        import("rehype-autolink-headings"),
-        import("remark-github-admonitions-to-directives"),
-      ]);
-      
-      return {
-        unified: modules[0].unified,
-        remarkParse: modules[1].default,
-        remarkGfm: modules[2].default,
-        remarkRehype: modules[3].default,
-        rehypeHighlight: modules[4].default,
-        rehypeStringify: modules[5].default,
-        a11yEmoji: modules[6].default,
-        remarkFrontmatter: modules[7].default,
-        remarkDirective: modules[8].default,
-        remarkTextr: modules[9].default,
-        remarkToc: modules[10].default,
-        sectionize: modules[11].default,
-        remarkIns: modules[12].default,
-        remarkSupersub: modules[13].default,
-        rehypeSlug: modules[14].default,
-        rehypeAutolinkHeadings: modules[15].default,
-        remarkGithubAdmonitionsToDirectives: modules[16].default,
-      };
-    } catch (error) {
-      console.error("Failed to load modules:", error);
-      throw new Error("Could not load required markdown processing modules");
-    }
-  }
-  
-  // Text transformation functions
-  function ellipses(input) {
-    return input.replace(/\.{3}/gim, "…");
-  }
-  
-  function addMarkTags(text) {
-    const markRegex = /==(.*?)==/g;
-    return text.replace(markRegex, "<mark>$1</mark>");
-  }
-  
-  function addSuperScript(text) {
-    const superRegex = /\^(.*?)\^/g;
-    return text.replace(superRegex, '<sup class="suptext">$1</sup>');
-  }
-  
-  function addSubScript(text) {
-    const subRegex = /\_-(.*?)-\_/g;
-    return text.replace(subRegex, '<sub class="subtext">$1</sub>');
-  }
-  
-  function applyTextTransformations() {
-    if (!contentContainer) return;
-    
-    const walker = document.createTreeWalker(
-      contentContainer,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode: function (node) {
-          if (!node.textContent.trim() || 
-              node.parentElement.tagName === "CODE" || 
-              node.parentElement.tagName === "PRE") {
-            return NodeFilter.FILTER_REJECT;
-          }
-          return NodeFilter.FILTER_ACCEPT;
+<file path="repo_2025-12-25T02_12.xml">
+This file is a merged representation of a subset of the codebase, containing specifically included files and files not matching ignore patterns, combined into a single document by Repomix.
+The content has been processed where empty lines have been removed.
+<file_summary>
+This section contains a summary of this file.
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: **/*.go, **/*.js, **/*.ts, **/*.css, **/*.html, **/*.yaml, **/*.toml, **/*.xml, **/*.bat, **/*.sh, **/*.py, **/*.md
+- Files matching these patterns are excluded: node_modules, **/node_modules, **/.venv/**, **/venv/**, **/*.md
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Empty lines have been removed from all files
+- Long base64 data strings (e.g., data:image/png;base64,...) have been truncated to reduce token count
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+</file_summary>
+<directory_structure>
+src/
+src/components/
+.gitignore
+LICENSE
+manifest.json
+package.json
+rollup.config.js
+src/App.svelte
+src/components/FilesTab.svelte
+src/components/MarkdownRenderer.svelte
+src/components/OutlineTab.svelte
+src/components/Sidebar.svelte
+src/main.js
+style.css
+</directory_structure>
+<files>
+This section contains the contents of the repository's files.
+<file path="rollup.config.js">
+import svelte from "rollup-plugin-svelte";
+import resolve from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
+import { terser } from "rollup-plugin-terser";
+import css from "rollup-plugin-css-only";
+import copy from "rollup-plugin-copy";
+const production = !process.env.ROLLUP_WATCH;
+export default [
+  // Content script bundle
+  {
+    input: "src/main.js",
+    output: {
+      sourcemap: !production,
+      format: "iife",
+      name: "app",
+      file: "dist/content.js",
+      inlineDynamicImports: true,  // ✅ Bundle all dynamic imports
+    },
+    plugins: [
+      svelte({
+        compilerOptions: {
+          dev: !production,
         },
-      }
-    );
-    
-    const textNodes = [];
-    let node;
-    while ((node = walker.nextNode())) {
-      textNodes.push(node);
-    }
-    
-    textNodes.forEach((textNode) => {
-      let content = textNode.textContent;
-      const originalContent = content;
-      
-      content = addMarkTags(content);
-      content = addSuperScript(content);
-      content = addSubScript(content);
-      
-      if (content !== originalContent) {
-        const tempDiv = document.createElement("div");
-        tempDiv.innerHTML = content;
-        
-        const fragment = document.createDocumentFragment();
-        while (tempDiv.firstChild) {
-          fragment.appendChild(tempDiv.firstChild);
-        }
-        
-        textNode.parentNode.replaceChild(fragment, textNode);
-      }
-    });
-  }
-  
-  // Helper function to traverse AST nodes
-  function visit(node, callback) {
-    callback(node);
-    if (node.children) {
-      node.children.forEach((child) => visit(child, callback));
-    }
-  }
-  
-  // Rehype plugin for code language icons
-  function rehypeCodeLanguageIcons() {
-    return (tree) => {
-      visit(tree, (node) => {
-        if (node.type === "element" && node.tagName === "pre") {
-          const codeElement = node.children.find(
-            (child) => child.type === "element" && child.tagName === "code"
-          );
-          
-          if (codeElement && codeElement.properties && codeElement.properties.className) {
-            const languageClass = codeElement.properties.className.find((cls) =>
-              cls.startsWith("language-")
-            );
-            
-            if (languageClass) {
-              const language = languageClass.replace("language-", "").toLowerCase();
-              const iconClass = languageIcons[language] || languageIcons.default;
-              
-              if (!node.properties) node.properties = {};
-              if (!node.properties.className) node.properties.className = [];
-              node.properties.className.push("has-language");
-              node.properties["data-language"] = language;
-              
-              const languageIcon = {
-                type: "element",
-                tagName: "div",
-                properties: {
-                  className: ["language-icon"],
-                },
-                children: [
-                  {
-                    type: "element",
-                    tagName: "i",
-                    properties: {
-                      className: iconClass.split(" "),
-                      title: language.toUpperCase(),
-                    },
-                    children: [],
-                  },
-                ],
-              };
-              
-              node.children.unshift(languageIcon);
-            }
-          }
-        }
-      });
-    };
-  }
-  
-  // Rehype plugin for admonitions
-  function rehypeAdmonitions() {
-    const typeConfig = {
-      note: { icon: "fa-circle-info", color: "#0969da" },
-      tip: { icon: "fa-lightbulb", color: "#1a7f37" },
-      important: { icon: "fa-message-exclamation", color: "#8250df" },
-      warning: { icon: "fa-triangle-exclamation", color: "#9a6700" },
-      caution: { icon: "fa-octagon-exclamation", color: "#cf222e" },
-    };
-    
-    return (tree) => {
-      visit(tree, (node) => {
-        if (
-          node.type === "element" &&
-          node.tagName === "div" &&
-          node.properties &&
-          node.properties.dataDirectiveName
-        ) {
-          const directiveName = node.properties.dataDirectiveName.toLowerCase();
-          const config = typeConfig[directiveName];
-          
-          if (config) {
-            if (!node.properties.className) node.properties.className = [];
-            node.properties.className.push("admonition", `admonition-${directiveName}`);
-            node.properties.style = `border-left-color: ${config.color};`;
-            
-            const iconElement = {
-              type: "element",
-              tagName: "i",
-              properties: {
-                className: ["fas", config.icon, "admonition-icon"],
-                style: `color: ${config.color};`,
-              },
-              children: [],
-            };
-            
-            const titleElement = {
-              type: "element",
-              tagName: "div",
-              properties: { className: ["admonition-title"] },
-              children: [
-                iconElement,
-                {
-                  type: "element",
-                  tagName: "span",
-                  properties: {},
-                  children: [
-                    {
-                      type: "text",
-                      value: directiveName.charAt(0).toUpperCase() + directiveName.slice(1),
-                    },
-                  ],
-                },
-              ],
-            };
-            
-            const contentWrapper = {
-              type: "element",
-              tagName: "div",
-              properties: { className: ["admonition-content"] },
-              children: node.children,
-            };
-            
-            node.children = [titleElement, contentWrapper];
-          }
-        }
-      });
-    };
-  }
-  
-  function extractDocumentOutline() {
-    setTimeout(() => {
-      const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      const outline = Array.from(headings).map(heading => ({
-        id: heading.id,
-        text: heading.textContent.replace('#', '').trim(),
-        level: parseInt(heading.tagName.substring(1))
-      }));
-      
-      dispatch('outlinegenerated', outline);
-    }, 200);
-  }
-  
-  async function discoverDirectoryFiles() {
-    try {
-      const currentPath = window.location.pathname;
-      const directoryPath = currentPath.substring(0, currentPath.lastIndexOf('/'));
-      
-      // In a real Chrome extension, you'd use chrome.fileSystem API or similar
-      // For now, we'll simulate this with a placeholder
-      // This would need to be implemented with proper file system access
-      const files = [];
-      
-      dispatch('filesdiscovered', files);
-    } catch (error) {
-      console.error("Error discovering directory files:", error);
-    }
-  }
-  
-  function addCodeCopyButtons() {
-    const defaultSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" id="copyicon"><path fill="currentColor" d="M17.997 4.17A3 3 0 0 1 20 7v12a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 2.003-2.83A4 4 0 0 0 10 8h4a4 4 0 0 0 3.98-3.597zM14 2a2 2 0 1 1 0 4h-4a2 2 0 1 1 0-4z"/></svg>';
-    const successSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" id="copysuccess"><g fill="none"><path fill="currentColor" fill-opacity="0.16" d="M8 3H5.4A2.4 2.4 0 0 0 3 5.4v15.2A2.4 2.4 0 0 0 5.4 23h13.2a2.4 2.4 0 0 0 2.4-2.4V5.4A2.4 2.4 0 0 0 18.6 3H16v1.2a.8.8 0 0 1-.8.8H8.8a.8.8 0 0 1-.8-.8z"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 3h2.6A2.4 2.4 0 0 1 21 5.4v15.2a2.4 2.4 0 0 1-2.4 2.4H5.4A2.4 2.4 0 0 1 3 20.6V5.4A2.4 2.4 0 0 1 5.4 3H8m0 11l3 3l5-7M8.8 1h6.4a.8.8 0 0 1 .8.8v2.4a.8.8 0 0 1-.8.8H8.8a.8.8 0 0 1-.8-.8V1.8a.8.8 0 0 1 .8-.8"/></g></svg>';
-    
-    const codeBlocks = document.querySelectorAll("pre");
-    
-    codeBlocks.forEach((block) => {
-      const codeElement = block.querySelector("code");
-      if (!codeElement) return;
-      
-      const button = document.createElement("button");
-      button.className = "copy-code-button";
-      button.innerHTML = defaultSVG;
-      
-      button.addEventListener("click", async () => {
-        try {
-          const codeToCopy = codeElement.innerText;
-          await navigator.clipboard.writeText(codeToCopy);
-          
-          button.innerHTML = successSVG;
-          button.classList.add("copied");
-          
-          setTimeout(() => {
-            button.innerHTML = defaultSVG;
-            button.classList.remove("copied");
-          }, 2000);
-        } catch (err) {
-          console.error("Failed to copy code: ", err);
-          button.innerHTML = '<i class="fas fa-times"></i>';
-          setTimeout(() => {
-            button.innerHTML = defaultSVG;
-          }, 2000);
-        }
-      });
-      
-      block.insertBefore(button, block.firstChild);
-    });
-  }
-</script>
-
-{#if isProcessing}
-  <div class="loading-container">
-    <div class="loading-content">
-      <i class="fas fa-spinner fa-spin"></i>
-      <h2>Processing Markdown</h2>
-      <p>Please wait while the document is being rendered...</p>
-    </div>
-  </div>
-{:else if errorMessage}
-  <div class="error-container">
-    <div class="error-content">
-      <i class="fas fa-exclamation-triangle"></i>
-      <h2>Error Rendering Markdown</h2>
-      <p>There was an error processing this markdown file:</p>
-      <pre>{errorMessage}</pre>
-    </div>
-  </div>
-{:else}
-  <div id="markdown-content-container" bind:this={contentContainer}>
-    {@html markdownContent}
-  </div>
-{/if}
-
-<style>
-  .loading-container,
-  .error-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 40px;
-  }
-  
-  .loading-content,
-  .error-content {
-    text-align: center;
-    max-width: 600px;
-  }
-  
-  .loading-content i {
-    font-size: 48px;
-    color: #0066cc;
-    margin-bottom: 24px;
-  }
-  
-  .error-content i {
-    font-size: 48px;
-    color: #cf222e;
-    margin-bottom: 24px;
-  }
-  
-  .loading-content h2,
-  .error-content h2 {
-    font-size: 24px;
-    margin: 0 0 12px 0;
-    color: #333;
-  }
-  
-  .loading-content p,
-  .error-content p {
-    color: #666;
-    margin: 0;
-  }
-  
-  .error-content pre {
-    margin-top: 20px;
-    padding: 16px;
-    background: #f5f5f5;
-    border-radius: 8px;
-    text-align: left;
-    overflow-x: auto;
-    white-space: pre-wrap;
-    color: #cf222e;
-  }
-  
-  #markdown-content-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 20px;
-  }
-  
-  /* Copy button styles */
-  :global(.copy-code-button) {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-    padding: 6px 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    z-index: 10;
-  }
-  
-  :global(.copy-code-button:hover) {
-    background: white;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  :global(.copy-code-button.copied) {
-    background: #d4edda;
-    border-color: #28a745;
-  }
-  
-  :global(pre) {
-    position: relative;
-  }
-</style>
+        emitCss: true,
+      }),
+      // Extract CSS to separate file
+      css({ 
+        output: "content.css" 
+      }),
+      resolve({
+        browser: true,
+        dedupe: ["svelte"],
+        exportConditions: ["svelte"],
+      }),
+      commonjs(),
+      production && terser(),
+      // Copy static assets
+      copy({
+        targets: [
+          { src: "manifest.json", dest: "dist" },
+          { src: "icons/*", dest: "dist/icons" },
+          // { src: "style.css", dest: "dist" },
+        ],
+      }),
+    ],
+    watch: {
+      clearScreen: false,
+    },
+  },
+];
 </file>
-
-<file path="src/components/OutlineTab.svelte">
-<script>
-  export let documentOutline = [];
-  
-  function scrollToHeading(id) {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      // Add a temporary highlight effect
-      element.classList.add('highlight-heading');
-      setTimeout(() => {
-        element.classList.remove('highlight-heading');
-      }, 2000);
-    }
-  }
-  
-  function getIndentClass(level) {
-    return `level-${Math.min(level, 6)}`;
-  }
-</script>
-
-<div class="outline-tab">
-  {#if documentOutline.length === 0}
-    <div class="empty-state">
-      <i class="fas fa-file-alt"></i>
-      <p>No headings found in this document</p>
-    </div>
-  {:else}
-    <ul class="outline-list">
-      {#each documentOutline as item}
-        <li class="outline-item {getIndentClass(item.level)}">
-          <button 
-            class="outline-link"
-            on:click={() => scrollToHeading(item.id)}
-            title={item.text}
-          >
-            <span class="heading-marker">
-              {#if item.level === 1}
-                <i class="fas fa-heading"></i>
-              {:else if item.level === 2}
-                <i class="fas fa-minus"></i>
-              {:else}
-                <i class="fas fa-circle" style="font-size: 6px;"></i>
-              {/if}
-            </span>
-            <span class="heading-text">{item.text}</span>
-          </button>
-        </li>
-      {/each}
-    </ul>
-  {/if}
-</div>
-
-<style>
-  .outline-tab {
-    padding: 16px;
-  }
-  
-  .empty-state {
-    text-align: center;
-    padding: 40px 20px;
-    color: #999;
-  }
-  
-  .empty-state i {
-    font-size: 48px;
-    margin-bottom: 16px;
-    opacity: 0.5;
-  }
-  
-  .empty-state p {
-    margin: 0;
-    font-size: 14px;
-  }
-  
-  .outline-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .outline-item {
-    margin: 0;
-  }
-  
-  .outline-link {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 8px 12px;
-    width: 100%;
-    background: transparent;
-    border: none;
-    text-align: left;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    color: #333;
-    font-size: 14px;
-    line-height: 1.5;
-  }
-  
-  .outline-link:hover {
-    background: #f5f5f5;
-    color: #0066cc;
-  }
-  
-  .heading-marker {
-    flex-shrink: 0;
-    width: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #0066cc;
-    opacity: 0.7;
-  }
-  
-  .heading-text {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  /* Indentation levels */
-  .level-1 {
-    padding-left: 0;
-  }
-  
-  .level-2 {
-    padding-left: 12px;
-  }
-  
-  .level-3 {
-    padding-left: 24px;
-  }
-  
-  .level-4 {
-    padding-left: 36px;
-  }
-  
-  .level-5 {
-    padding-left: 48px;
-  }
-  
-  .level-6 {
-    padding-left: 60px;
-  }
-  
-  /* Global style for heading highlight effect */
-  :global(.highlight-heading) {
-    animation: highlightPulse 2s ease;
-  }
-  
-  @keyframes highlightPulse {
-    0%, 100% {
-      background-color: transparent;
-    }
-    50% {
-      background-color: rgba(0, 102, 204, 0.1);
-    }
-  }
-</style>
-</file>
-
-<file path="src/components/Sidebar.svelte">
-<script>
-  import { createEventDispatcher } from 'svelte';
-  import OutlineTab from './OutlineTab.svelte';
-  import FilesTab from './FilesTab.svelte';
-  
-  export let sidebarOpen = true;
-  export let currentFile = '';
-  export let documentOutline = [];
-  export let directoryFiles = [];
-  
-  let activeTab = 'outline';
-  const dispatch = createEventDispatcher();
-  
-  function switchTab(tab) {
-    activeTab = tab;
-  }
-  
-  function handleFileSelect(event) {
-    dispatch('filechange', event.detail);
-  }
-</script>
-
-<aside class="sidebar" class:open={sidebarOpen}>
-  <div class="sidebar-content">
-    <div class="sidebar-header">
-      <h2>Navigation</h2>
-    </div>
-    
-    <div class="tabs">
-      <button 
-        class="tab-button" 
-        class:active={activeTab === 'outline'}
-        on:click={() => switchTab('outline')}
-      >
-        <i class="fas fa-list-ul"></i>
-        <span>Outline</span>
-      </button>
-      <button 
-        class="tab-button" 
-        class:active={activeTab === 'files'}
-        on:click={() => switchTab('files')}
-      >
-        <i class="fas fa-folder-open"></i>
-        <span>Files</span>
-      </button>
-    </div>
-    
-    <div class="tab-content">
-      {#if activeTab === 'outline'}
-        <OutlineTab {documentOutline} />
-      {:else}
-        <FilesTab 
-          {directoryFiles} 
-          {currentFile}
-          on:fileselect={handleFileSelect}
-        />
-      {/if}
-    </div>
-  </div>
-</aside>
-
-<style>
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: -300px;
-    width: 300px;
-    height: 100vh;
-    background: #ffffff;
-    border-right: 1px solid #e0e0e0;
-    transition: left 0.3s ease;
-    z-index: 1000;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .sidebar.open {
-    left: 0;
-  }
-  
-  .sidebar-content {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
-  }
-  
-  .sidebar-header {
-    padding: 20px;
-    border-bottom: 1px solid #e0e0e0;
-    background: #fafafa;
-  }
-  
-  .sidebar-header h2 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-  }
-  
-  .tabs {
-    display: flex;
-    border-bottom: 1px solid #e0e0e0;
-    background: #fafafa;
-  }
-  
-  .tab-button {
-    flex: 1;
-    padding: 12px 16px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #666;
-    transition: all 0.2s ease;
-    position: relative;
-  }
-  
-  .tab-button:hover {
-    background: #f0f0f0;
-    color: #333;
-  }
-  
-  .tab-button.active {
-    color: #0066cc;
-    font-weight: 600;
-  }
-  
-  .tab-button.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: #0066cc;
-  }
-  
-  .tab-content {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-  }
-  
-  @media (max-width: 768px) {
-    .sidebar {
-      width: 100%;
-      left: -100%;
-    }
-    
-    .sidebar.open {
-      left: 0;
-    }
-  }
-</style>
-</file>
-
-<file path="src/App.svelte">
-<script>
-  import { onMount } from 'svelte';
-  import Sidebar from './components/Sidebar.svelte';
-  import MarkdownRenderer from './components/MarkdownRenderer.svelte';
-  
-  // Prop passed from main.js containing the original pre-rendered text
-  export let initialMarkdownContent = '';
-
-  let sidebarOpen = true;
-  let currentFile = '';
-  let directoryFiles = [];
-  let documentOutline = [];
-  // Use the passed content for initial render
-  let markdownContent = initialMarkdownContent;
-  let renderedHtml = '';
-  
-  onMount(() => {
-    currentFile = window.location.pathname;
-    // If content wasn't passed via props (fallback), try to extract it
-    if (!markdownContent) {
-      extractMarkdownContent();
-    }
-  });
-  
-  function extractMarkdownContent() {
-    const preElement = document.querySelector('pre');
-    if (preElement && preElement.textContent) {
-      markdownContent = preElement.textContent;
-    }
-  }
-  
-  function toggleSidebar() {
-    sidebarOpen = !sidebarOpen;
-  }
-  
-  // FIX: Destructure detail from the event object
-  function handleOutlineGenerated(event) {
-    documentOutline = event.detail;
-  }
-  
-  // FIX: Destructure detail from the event object
-  function handleFilesDiscovered(event) {
-    directoryFiles = event.detail;
-  }
-  
-  function handleFileChange(event) {
-    const newFile = event.detail;
-    window.location.href = newFile;
-  }
-  
-  // FIX: Destructure detail from the event object
-  function handleRendered(event) {
-    renderedHtml = event.detail;
-  }
-</script>
-
-<svelte:head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</svelte:head>
-
-<div class="app-container" class:sidebar-open={sidebarOpen}>
-  <button class="sidebar-toggle" on:click={toggleSidebar} aria-label="Toggle sidebar">
-    <i class="fas {sidebarOpen ? 'fa-chevron-left' : 'fa-chevron-right'}"></i>
-  </button>
-  
-  <Sidebar 
-    {sidebarOpen}
-    {currentFile}
-    {documentOutline}
-    {directoryFiles}
-    on:filechange={handleFileChange}
-  />
-  
-  <main class="content-wrapper">
-    <MarkdownRenderer 
-      {markdownContent}
-      on:outlinegenerated={handleOutlineGenerated}
-      on:filesdiscovered={handleFilesDiscovered}
-      on:rendered={handleRendered}
-    />
-  </main>
-</div>
-
-<style>
-  :global(body) {
-    margin: 0;
-    padding: 0;
-    font-family: "Zed Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  }
-  
-  .app-container {
-    display: flex;
-    min-height: 100vh;
-    position: relative;
-  }
-  
-  .sidebar-toggle {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1001;
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
-  }
-  
-  .sidebar-toggle:hover {
-    background: #f5f5f5;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  .sidebar-open .sidebar-toggle {
-    left: 320px;
-  }
-  
-  .content-wrapper {
-    flex: 1;
-    transition: margin-left 0.3s ease;
-    margin-left: 0;
-  }
-  
-  .sidebar-open .content-wrapper {
-    margin-left: 300px;
-  }
-  
-  @media (max-width: 768px) {
-    .sidebar-open .sidebar-toggle {
-      left: 20px;
-    }
-    
-    .sidebar-open .content-wrapper {
-      margin-left: 0;
-    }
-  }
-</style>
-</file>
-
 <file path="src/main.js">
 import App from './App.svelte';
-
+import '../style.css';
 // Wait for DOM to be ready
 function init() {
   console.log("Sven Extension: Initializing...");
-
   // Check if this is a markdown file based on extension
   const path = window.location.pathname.toLowerCase();
   const isMarkdownFile =
     path.endsWith('.md') ||
     path.endsWith('.markdown') ||
     path.endsWith('.mdown');
-  
   if (!isMarkdownFile) {
     console.log('Sven Extension: Not a markdown file, skipping.');
     return;
   }
-
   // Prevent double-initialization
   if (document.getElementById('sven-app-root')) return;
-
   // Extract the markdown content BEFORE clearing the body
   let initialContent = '';
   const preElement = document.querySelector('pre');
-  
   if (preElement) {
     initialContent = preElement.textContent;
   } else {
     // Fallback: chrome sometimes renders text without a pre tag for very large files or specific encodings
     initialContent = document.body.innerText;
   }
-  
   if (!initialContent.trim()) {
     console.warn("Sven Extension: No content found to render.");
   }
-
   // Clear the body and mount Svelte app
   document.body.innerHTML = '<div id="sven-app-root"></div>';
-  
   const app = new App({
     target: document.getElementById('sven-app-root'),
     props: {
       initialMarkdownContent: initialContent
     }
   });
-  
   return app;
 }
-
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
@@ -1312,14 +222,349 @@ if (document.readyState === 'loading') {
   init();
 }
 </file>
+<file path="style.css">
+:root {
+  --sym: "Symbols Nerd Font";
+  --sans: Finder, var(--sym), -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: "AptosMono Nerd Font", "SFMono Nerd Font", monospace;
+  --borderLight: 1px solid #e0e0e020;
+  --premShadow: 0 2px 4px rgba(0, 0, 0, 0.35), 0 8px 18px rgba(0, 0, 0, 0.45),
+    0 16px 40px rgba(0, 0, 0, 0.55);
+}
+::webkit-scrollbar {
+  display: none;
+}
+/* Global Styles */
+* {
+  box-sizing: border-box;
+  text-rendering: optimizeLegibility;
+  letter-spacing: 0.05px;
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.6;
+  color: #e0e0e0dd;
+  background: #0d1117;
+}
+/* Markdown Content Styles */
+#markdown-content-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+/* Headings */
+#markdown-content-container h1,
+#markdown-content-container h2,
+#markdown-content-container h3,
+#markdown-content-container h4,
+#markdown-content-container h5,
+#markdown-content-container h6 {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  line-height: 1.25;
+  position: relative;
+}
+#markdown-content-container h1 {
+  font-size: 2em;
+  border-bottom: var(--borderLight);
+  padding-bottom: 0.3em;
+}
+#markdown-content-container h2 {
+  font-size: 1.5em;
+  border-bottom: var(--borderLight);
+  padding-bottom: 0.3em;
+}
+#markdown-content-container h3 {
+  font-size: 1.25em;
+}
+#markdown-content-container h4 {
+  font-size: 1em;
+}
+#markdown-content-container h5 {
+  font-size: 0.875em;
+}
+#markdown-content-container h6 {
+  font-size: 0.85em;
+  color: #57606a;
+}
+/* Heading anchor links */
+.heading-anchor-link {
+  position: absolute;
+  left: -24px;
+  opacity: 0;
+  padding-right: 4px;
+  text-decoration: none;
+  color: #0066cc;
+  transition: opacity 0.2s ease;
+}
+h1:hover .heading-anchor-link,
+h2:hover .heading-anchor-link,
+h3:hover .heading-anchor-link,
+h4:hover .heading-anchor-link,
+h5:hover .heading-anchor-link,
+h6:hover .heading-anchor-link {
+  opacity: 1;
+}
+/* Paragraphs and text */
+#markdown-content-container p {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+#markdown-content-container strong {
+  font-weight: 600;
+}
+#markdown-content-container em {
+  font-style: italic;
+}
+/* Links */
+#markdown-content-container a {
+  color: #0066cc;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+#markdown-content-container a:hover {
+  color: #dda732;
+  text-decoration: none;
+}
+/* Lists */
+#markdown-content-container ul,
+#markdown-content-container ol {
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding-left: 2em;
+}
+#markdown-content-container li {
+  margin-bottom: 4px;
+}
+#markdown-content-container li > p {
+  margin-top: 16px;
+}
+/* Task lists */
+#markdown-content-container input[type="checkbox"] {
+  margin-right: 8px;
+}
+/* Code */
+#markdown-content-container code {
+  padding: 0.2em 0.4em;
+  margin: 0;
+  font-size: 85%;
+  background-color: rgba(175, 184, 193, 0.2);
+  border-radius: 6px;
+  font-family: var(--mono);
+}
+/* Code blocks */
+#markdown-content-container pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #09090a;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  position: relative;
+  transition: all 125ms ease-in;
+}
+#markdown-content-container pre:hover {
+  box-shadow: var(--premShadow);
+}
+#markdown-content-container pre code {
+  display: inline;
+  padding: 0;
+  margin: 0;
+  overflow: visible;
+  line-height: inherit;
+  word-wrap: normal;
+  background-color: transparent;
+  border: 0;
+}
+/* Code block with language icon */
+pre.has-language {
+  padding-top: 26px !important;
+}
+.language-icon {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  font-size: 15px;
+  color: #57606a;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+/* Copy button */
+.copy-code-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0);
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: 7px;
+  padding: 6px 10px;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 125ms ease-in;
+}
+.copy-code-button:hover {
+  background: #ffffff20;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.copy-code-button.copied {
+  background: #d4edda10;
+  border-color: #28a745;
+}
+.copy-code-button svg {
+  display: block;
+}
+/* Blockquotes */
+#markdown-content-container blockquote {
+  margin: 0 0 16px 0;
+  padding: 0 1em;
+  color: #57606a;
+  border-left: 0.25em solid #d0d7de50;
+}
+#markdown-content-container blockquote > :first-child {
+  margin-top: 0;
+}
+#markdown-content-container blockquote > :last-child {
+  margin-bottom: 0;
+}
+/* Tables */
+#markdown-content-container table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow: auto;
+  margin-bottom: 16px;
+}
+#markdown-content-container table th,
+#markdown-content-container table td {
+  padding: 6px 13px;
+  border: var(--borderLight);
+}
+#markdown-content-container table th {
+  font-weight: 600;
+  background-color: #f6f8fa;
+}
+#markdown-content-container table tr {
+  background-color: #ffffff;
+  border: var(--borderLight);
+}
+#markdown-content-container table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+/* Horizontal rules */
+#markdown-content-container hr {
+  height: 0.25em;
+  padding: 0;
+  margin: 24px 0;
+  background-color: #d0d7de;
+  border: 0;
+}
+/* Images */
+#markdown-content-container img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 9px;
+  margin: 16px 0;
+}
+/* Admonitions */
+.admonition {
+  padding: 16px;
+  margin-bottom: 16px;
+  border-left: 4px solid;
+  border-radius: 6px;
+  background-color: #f6f8fa;
+}
+.admonition-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.admonition-icon {
+  font-size: 18px;
+}
+.admonition-content {
+  margin-left: 26px;
+}
+.admonition-content > :first-child {
+  margin-top: 0;
+}
+.admonition-content > :last-child {
+  margin-bottom: 0;
+}
+/* Text transformations */
+mark {
+  background-color: #fff3cd;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+.suptext {
+  font-size: 75%;
+  vertical-align: super;
+}
+.subtext {
+  font-size: 75%;
+  vertical-align: sub;
+}
+/* Inserted text */
+ins {
+  text-decoration: none;
+  background-color: #d4edda;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+/* Syntax highlighting overrides */
+.hljs {
+  background: transparent;
+}
+/* Responsive design */
+@media (max-width: 768px) {
+  #markdown-content-container {
+    padding: 20px 16px;
+  }
+  #markdown-content-container h1 {
+    font-size: 1.75em;
+  }
+  #markdown-content-container h2 {
+    font-size: 1.5em;
+  }
+  #markdown-content-container pre {
+    padding: 12px;
+  }
+}
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+/* Selection */
+::selection {
+  background-color: rgba(0, 102, 204, 0.2);
+}
+</file>
+</files>
+</file>
 
 <file path="manifest.json">
 {
   "manifest_version": 3,
-  "name": "Sven",
-  "version": "2.0.1",
-  "description": "Renders local markdown files with an interactive sidebar for navigation and file browsing",
-  "permissions": [],
+  "name": "Sven - Markdown Viewer",
+  "version": "1.0.0",
+  "description": "Advanced markdown file viewer with enhanced rendering, outline navigation, and file browsing",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
   "host_permissions": [
     "file:///*"
   ],
@@ -1330,946 +575,276 @@ if (document.readyState === 'loading') {
         "file:///*.markdown",
         "file:///*.mdown"
       ],
-      "js": [
-        "build/bundle.js"
-      ],
-      "css": [
-        "style.css",
-        "build/bundle.css"
-      ],
+      "js": ["content.js"],
+      "css": ["content.css", "style.css"],
       "run_at": "document_end"
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "style.css",
-        "build/*"
-      ],
-      "matches": [
-        "file:///*"
-      ]
     }
   ],
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "content.css",
+        "style.css",
+        "icons/*"
+      ],
+      "matches": ["file:///*"]
+    }
+  ]
 }
 </file>
 
 <file path="package.json">
 {
-  "name": "sven",
-  "version": "2.0.0",
-  "description": "Chrome extension for rendering markdown files with Svelte",
+  "name": "sven-markdown-viewer",
+  "version": "1.0.0",
+  "description": "Advanced markdown viewer browser extension",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "validate": "svelte-check"
+    "clean": "rm -rf dist",
+    "rebuild": "npm run clean && npm run build"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^25.0.7",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-terser": "^0.4.4",
-    "rollup": "^4.9.4",
+    "rollup": "^4.9.6",
+    "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-css-only": "^4.5.2",
-    "rollup-plugin-svelte": "^7.1.6",
-    "svelte": "^4.2.8",
-    "svelte-check": "^3.6.3"
+    "rollup-plugin-svelte": "^7.2.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "svelte": "^4.2.8"
   },
   "dependencies": {
     "@fec/remark-a11y-emoji": "^4.0.2",
+    "hast-util-from-selector": "^3.0.0",
+    "hast-util-heading-rank": "^3.0.0",
+    "hast-util-select": "^6.0.2",
+    "hast-util-to-text": "^4.0.0",
+    "hastscript": "^9.0.0",
+    "refractor": "^4.8.1",
     "rehype-autolink-headings": "^7.1.0",
     "rehype-highlight": "^7.0.0",
     "rehype-slug": "^6.0.0",
     "rehype-stringify": "^10.0.0",
     "remark-directive": "^3.0.0",
-    "remark-flexible-containers": "^2.0.1",
-    "remark-flexible-paragraphs": "^2.0.1",
     "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.0",
     "remark-github-admonitions-to-directives": "^2.0.1",
-    "remark-ins": "^2.0.0",
+    "remark-ins": "^1.2.2",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.0",
     "remark-sectionize": "^2.0.0",
     "remark-supersub": "^1.0.0",
     "remark-textr": "^6.0.0",
     "remark-toc": "^9.0.0",
-    "unified": "^11.0.4"
+    "unified": "^11.0.4",
+    "unist-util-visit": "^5.0.0"
   }
 }
-</file>
-
-<file path="README copy.md">
-# Markdown Renderer with Interactive Sidebar
-
-A modern Chrome extension built with Svelte that renders local markdown files with an interactive sidebar for navigation and file browsing.
-
-## Features
-
-### 🎯 Interactive Sidebar
-- **Document Outline Tab**: Automatically generates a table of contents from heading structure (H1-H6)
-- **Files Tab**: Browse and switch between markdown files in the same directory
-- **Collapsible**: Toggle sidebar visibility with a floating button
-- **Smooth Navigation**: Click headings to scroll smoothly to sections
-
-### 📝 Advanced Markdown Rendering
-- Full GitHub Flavored Markdown (GFM) support
-- Syntax highlighting for code blocks with language icons
-- Admonitions (Note, Tip, Important, Warning, Caution)
-- Task lists with checkboxes
-- Tables with styling
-- Custom text transformations:
-  - Highlighted text: `==text==`
-  - Superscript: `^text^`
-  - Subscript: `_-text-_`
-- Front matter support (YAML, TOML)
-- Auto-linked headings
-- Emoji support
-- And much more!
-
-### 🎨 Professional Design
-- Clean, modern interface
-- Responsive layout
-- Smooth animations and transitions
-- Copy-to-clipboard buttons on code blocks
-- Language-specific icons for code blocks
-
-## Installation
-
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
-- Google Chrome browser
-
-### Development Setup
-
-1. **Clone or download the extension files**
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Build the extension**
-   ```bash
-   npm run build
-   ```
-   
-   For development with auto-rebuild:
-   ```bash
-   npm run dev
-   ```
-
-4. **Load the extension in Chrome**
-   - Open Chrome and navigate to `chrome://extensions/`
-   - Enable "Developer mode" (toggle in top-right corner)
-   - Click "Load unpacked"
-   - Select the extension directory (where `manifest.json` is located)
-
-5. **Enable file access**
-   - In `chrome://extensions/`, find the loaded extension
-   - Click "Details"
-   - Enable "Allow access to file URLs"
-
-## Usage
-
-1. **Open a local markdown file** in Chrome using `file://` protocol
-   - Example: `file:///Users/username/Documents/README.md`
-
-2. **The extension will automatically**:
-   - Render the markdown with full styling
-   - Generate a document outline in the sidebar
-   - Discover other markdown files in the same directory (when supported)
-
-3. **Navigate with the sidebar**:
-   - Click the toggle button (top-left) to show/hide sidebar
-   - Switch between "Outline" and "Files" tabs
-   - Click any heading in the outline to jump to that section
-   - Click any file to open it
-
-## Project Structure
-
-```
-markdown-renderer-svelte/
-├── components/
-│   ├── Sidebar.svelte          # Main sidebar container
-│   ├── OutlineTab.svelte        # Document outline tab
-│   ├── FilesTab.svelte          # File browser tab
-│   └── MarkdownRenderer.svelte  # Core markdown processing
-├── App.svelte                   # Root Svelte component
-├── main.js                      # Entry point
-├── manifest.json                # Chrome extension manifest
-├── package.json                 # Dependencies and scripts
-├── rollup.config.js             # Svelte build configuration
-├── style.css                    # Global styles
-└── README.md                    # This file
-```
-
-## Development
-
-### Scripts
-
-- `npm run build` - Build for production
-- `npm run dev` - Build and watch for changes
-- `npm run validate` - Run Svelte type checking
-
-### Key Technologies
-
-- **Svelte 4**: Reactive UI framework
-- **Rollup**: Module bundler
-- **Unified/Remark/Rehype**: Markdown processing pipeline
-- **rehype-highlight**: Syntax highlighting
-- **remark-gfm**: GitHub Flavored Markdown
-
-### Customization
-
-#### Styling
-Edit `style.css` to customize the appearance of rendered markdown.
-
-#### Markdown Processing
-Modify `components/MarkdownRenderer.svelte` to add or remove remark/rehype plugins.
-
-#### Sidebar Behavior
-Customize `components/Sidebar.svelte`, `OutlineTab.svelte`, or `FilesTab.svelte` for different layouts or features.
-
-## Browser Compatibility
-
-- **Chrome**: Fully supported (primary target)
-- **Edge**: Should work (Chromium-based)
-- **Other browsers**: Not tested, may require manifest adjustments
-
-## Known Limitations
-
-1. **File Discovery**: The "Files" tab currently has limited functionality due to browser security restrictions on local file access. Full directory browsing would require additional permissions or a native messaging host.
-
-2. **File Protocol**: The extension only works with `file://` URLs. It won't activate on `http://` or `https://` URLs.
-
-3. **Large Files**: Very large markdown files may take a moment to process.
-
-## Future Enhancements
-
-- [ ] Implement full directory file discovery (may require native messaging)
-- [ ] Add search functionality within documents
-- [ ] Export rendered HTML
-- [ ] Dark mode support
-- [ ] Customizable themes
-- [ ] Bookmark/favorites system
-- [ ] Recent files history
-
-## Contributing
-
-Contributions are welcome! Some areas for improvement:
-- Enhanced file system integration
-- Additional markdown plugins
-- Performance optimizations
-- UI/UX improvements
-- Documentation
-
-## License
-
-This project is provided as-is for educational and personal use.
-
-## Credits
-
-Built with:
-- [Svelte](https://svelte.dev/)
-- [Unified](https://unifiedjs.com/)
-- [Highlight.js](https://highlightjs.org/)
-- [Font Awesome](https://fontawesome.com/)
-
----
-
-**Note**: This is a rewrite of the original JavaScript-based extension, now using Svelte for better component architecture and maintainability.
-</file>
-
-<file path="README.md">
-# Markdown Renderer with Interactive Sidebar
-
-A modern Chrome extension built with Svelte that renders local markdown files with an interactive sidebar for navigation and file browsing.
-
-## Features
-
-### 🎯 Interactive Sidebar
-- **Document Outline Tab**: Automatically generates a table of contents from heading structure (H1-H6)
-- **Files Tab**: Browse and switch between markdown files in the same directory
-- **Collapsible**: Toggle sidebar visibility with a floating button
-- **Smooth Navigation**: Click headings to scroll smoothly to sections
-
-### 📝 Advanced Markdown Rendering
-- Full GitHub Flavored Markdown (GFM) support
-- Syntax highlighting for code blocks with language icons
-- Admonitions (Note, Tip, Important, Warning, Caution)
-- Task lists with checkboxes
-- Tables with styling
-- Custom text transformations:
-  - Highlighted text: `==text==`
-  - Superscript: `^text^`
-  - Subscript: `_-text-_`
-- Front matter support (YAML, TOML)
-- Auto-linked headings
-- Emoji support
-- And much more!
-
-### 🎨 Professional Design
-- Clean, modern interface
-- Responsive layout
-- Smooth animations and transitions
-- Copy-to-clipboard buttons on code blocks
-- Language-specific icons for code blocks
-
-## Installation
-
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
-- Google Chrome browser
-
-### Development Setup
-
-1. **Clone or download the extension files**
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Build the extension**
-   ```bash
-   npm run build
-   ```
-   
-   For development with auto-rebuild:
-   ```bash
-   npm run dev
-   ```
-
-4. **Load the extension in Chrome**
-   - Open Chrome and navigate to `chrome://extensions/`
-   - Enable "Developer mode" (toggle in top-right corner)
-   - Click "Load unpacked"
-   - Select the extension directory (where `manifest.json` is located)
-
-5. **Enable file access**
-   - In `chrome://extensions/`, find the loaded extension
-   - Click "Details"
-   - Enable "Allow access to file URLs"
-
-## Usage
-
-1. **Open a local markdown file** in Chrome using `file://` protocol
-   - Example: `file:///Users/username/Documents/README.md`
-
-2. **The extension will automatically**:
-   - Render the markdown with full styling
-   - Generate a document outline in the sidebar
-   - Discover other markdown files in the same directory (when supported)
-
-3. **Navigate with the sidebar**:
-   - Click the toggle button (top-left) to show/hide sidebar
-   - Switch between "Outline" and "Files" tabs
-   - Click any heading in the outline to jump to that section
-   - Click any file to open it
-
-## Project Structure
-
-```
-markdown-renderer-svelte/
-├── components/
-│   ├── Sidebar.svelte          # Main sidebar container
-│   ├── OutlineTab.svelte        # Document outline tab
-│   ├── FilesTab.svelte          # File browser tab
-│   └── MarkdownRenderer.svelte  # Core markdown processing
-├── App.svelte                   # Root Svelte component
-├── main.js                      # Entry point
-├── manifest.json                # Chrome extension manifest
-├── package.json                 # Dependencies and scripts
-├── rollup.config.js             # Svelte build configuration
-├── style.css                    # Global styles
-└── README.md                    # This file
-```
-
-## Development
-
-### Scripts
-
-- `npm run build` - Build for production
-- `npm run dev` - Build and watch for changes
-- `npm run validate` - Run Svelte type checking
-
-### Key Technologies
-
-- **Svelte 4**: Reactive UI framework
-- **Rollup**: Module bundler
-- **Unified/Remark/Rehype**: Markdown processing pipeline
-- **rehype-highlight**: Syntax highlighting
-- **remark-gfm**: GitHub Flavored Markdown
-
-### Customization
-
-#### Styling
-Edit `style.css` to customize the appearance of rendered markdown.
-
-#### Markdown Processing
-Modify `components/MarkdownRenderer.svelte` to add or remove remark/rehype plugins.
-
-#### Sidebar Behavior
-Customize `components/Sidebar.svelte`, `OutlineTab.svelte`, or `FilesTab.svelte` for different layouts or features.
-
-## Browser Compatibility
-
-- **Chrome**: Fully supported (primary target)
-- **Edge**: Should work (Chromium-based)
-- **Other browsers**: Not tested, may require manifest adjustments
-
-## Known Limitations
-
-1. **File Discovery**: The "Files" tab currently has limited functionality due to browser security restrictions on local file access. Full directory browsing would require additional permissions or a native messaging host.
-
-2. **File Protocol**: The extension only works with `file://` URLs. It won't activate on `http://` or `https://` URLs.
-
-3. **Large Files**: Very large markdown files may take a moment to process.
-
-## Future Enhancements
-
-- [ ] Implement full directory file discovery (may require native messaging)
-- [ ] Add search functionality within documents
-- [ ] Export rendered HTML
-- [ ] Dark mode support
-- [ ] Customizable themes
-- [ ] Bookmark/favorites system
-- [ ] Recent files history
-
-## Contributing
-
-Contributions are welcome! Some areas for improvement:
-- Enhanced file system integration
-- Additional markdown plugins
-- Performance optimizations
-- UI/UX improvements
-- Documentation
-
-## License
-
-This project is provided as-is for educational and personal use.
-
-## Credits
-
-Built with:
-- [Svelte](https://svelte.dev/)
-- [Unified](https://unifiedjs.com/)
-- [Highlight.js](https://highlightjs.org/)
-- [Font Awesome](https://fontawesome.com/)
-
----
-
-**Note**: This is a rewrite of the original JavaScript-based extension, now using Svelte for better component architecture and maintainability.
 </file>
 
 <file path="rollup.config.js">
-import svelte from 'rollup-plugin-svelte';
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import terser from '@rollup/plugin-terser';
-import css from 'rollup-plugin-css-only';
-
+import svelte from "rollup-plugin-svelte";
+import resolve from "@rollup/plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
+import { terser } from "rollup-plugin-terser";
+import css from "rollup-plugin-css-only";
+import copy from "rollup-plugin-copy";
 const production = !process.env.ROLLUP_WATCH;
-
-export default {
-  input: 'src/main.js',
-  output: {
-    sourcemap: !production,
-    format: 'iife',
-    name: 'app',
-    file: 'build/bundle.js',
-    inlineDynamicImports: true // Required for dynamic imports in extensions
+export default [
+  // Content script bundle
+  {
+    input: "src/main.js",
+    output: {
+      sourcemap: !production,
+      format: "iife",
+      name: "app",
+      file: "dist/content.js",
+      inlineDynamicImports: true,  // ✅ Bundle all dynamic imports
+    },
+    plugins: [
+      svelte({
+        compilerOptions: {
+          dev: !production,
+        },
+        emitCss: true,
+      }),
+      // Extract CSS to separate file
+      css({ 
+        output: "content.css" 
+      }),
+      resolve({
+        browser: true,
+        dedupe: ["svelte"],
+        exportConditions: ["svelte"],
+      }),
+      commonjs(),
+      production && terser(),
+      // Copy static assets
+      copy({
+        targets: [
+          { src: "manifest.json", dest: "dist" },
+          { src: "icons/*", dest: "dist/icons" },
+          // { src: "style.css", dest: "dist" },
+        ],
+      }),
+    ],
+    watch: {
+      clearScreen: false,
+    },
   },
-  plugins: [
-    svelte({
-      compilerOptions: {
-        dev: !production
-      }
-    }),
-    css({ output: 'build/bundle.css' }),
-    resolve({
-      browser: true,
-      dedupe: ['svelte'],
-      exportConditions: ['svelte']
-    }),
-    commonjs(),
-    production && terser()
-  ],
-  watch: {
-    clearScreen: false
-  }
-};
+];
 </file>
 
-<file path="style.css">
-:root {
-  --sym: "Symbols Nerd Font";
-  --sans: Finder, var(--sym);
-}
-
-/* Global Styles */
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  font-family: var(--sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-  color: #e0e0e0;
-  background: #0d1117;
-}
-
-/* Markdown Content Styles */
-#markdown-content-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 40px 20px;
-}
-
-/* Headings */
-#markdown-content-container h1,
-#markdown-content-container h2,
-#markdown-content-container h3,
-#markdown-content-container h4,
-#markdown-content-container h5,
-#markdown-content-container h6 {
-  margin-top: 24px;
-  margin-bottom: 16px;
-  font-weight: 600;
-  line-height: 1.25;
-  position: relative;
-}
-
-#markdown-content-container h1 {
-  font-size: 2em;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 0.3em;
-}
-
-#markdown-content-container h2 {
-  font-size: 1.5em;
-  border-bottom: 1px solid #e0e0e0;
-  padding-bottom: 0.3em;
-}
-
-#markdown-content-container h3 {
-  font-size: 1.25em;
-}
-
-#markdown-content-container h4 {
-  font-size: 1em;
-}
-
-#markdown-content-container h5 {
-  font-size: 0.875em;
-}
-
-#markdown-content-container h6 {
-  font-size: 0.85em;
-  color: #57606a;
-}
-
-/* Heading anchor links */
-.heading-anchor-link {
-  position: absolute;
-  left: -24px;
-  opacity: 0;
-  padding-right: 4px;
-  text-decoration: none;
-  color: #0066cc;
-  transition: opacity 0.2s ease;
-}
-
-h1:hover .heading-anchor-link,
-h2:hover .heading-anchor-link,
-h3:hover .heading-anchor-link,
-h4:hover .heading-anchor-link,
-h5:hover .heading-anchor-link,
-h6:hover .heading-anchor-link {
-  opacity: 1;
-}
-
-/* Paragraphs and text */
-#markdown-content-container p {
-  margin-top: 0;
-  margin-bottom: 16px;
-}
-
-#markdown-content-container strong {
-  font-weight: 600;
-}
-
-#markdown-content-container em {
-  font-style: italic;
-}
-
-/* Links */
-#markdown-content-container a {
-  color: #0066cc;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-#markdown-content-container a:hover {
-  color: #0052a3;
-  text-decoration: underline;
-}
-
-/* Lists */
-#markdown-content-container ul,
-#markdown-content-container ol {
-  margin-top: 0;
-  margin-bottom: 16px;
-  padding-left: 2em;
-}
-
-#markdown-content-container li {
-  margin-bottom: 4px;
-}
-
-#markdown-content-container li > p {
-  margin-top: 16px;
-}
-
-/* Task lists */
-#markdown-content-container input[type="checkbox"] {
-  margin-right: 8px;
-}
-
-/* Code */
-#markdown-content-container code {
-  padding: 0.2em 0.4em;
-  margin: 0;
-  font-size: 85%;
-  background-color: rgba(175, 184, 193, 0.2);
-  border-radius: 6px;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-}
-
-/* Code blocks */
-#markdown-content-container pre {
-  padding: 16px;
-  overflow: auto;
-  font-size: 85%;
-  line-height: 1.45;
-  background-color: #f6f8fa;
-  border-radius: 6px;
-  margin-bottom: 16px;
-  position: relative;
-}
-
-#markdown-content-container pre code {
-  display: inline;
-  padding: 0;
-  margin: 0;
-  overflow: visible;
-  line-height: inherit;
-  word-wrap: normal;
-  background-color: transparent;
-  border: 0;
-}
-
-/* Code block with language icon */
-pre.has-language {
-  padding-top: 40px;
-}
-
-.language-icon {
-  position: absolute;
-  top: 8px;
-  left: 12px;
-  font-size: 16px;
-  color: #57606a;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* Copy button */
-.copy-code-button {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.copy-code-button:hover {
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.copy-code-button.copied {
-  background: #d4edda;
-  border-color: #28a745;
-}
-
-.copy-code-button svg {
-  display: block;
-}
-
-/* Blockquotes */
-#markdown-content-container blockquote {
-  margin: 0 0 16px 0;
-  padding: 0 1em;
-  color: #57606a;
-  border-left: 0.25em solid #d0d7de;
-}
-
-#markdown-content-container blockquote > :first-child {
-  margin-top: 0;
-}
-
-#markdown-content-container blockquote > :last-child {
-  margin-bottom: 0;
-}
-
-/* Tables */
-#markdown-content-container table {
-  border-spacing: 0;
-  border-collapse: collapse;
-  display: block;
-  width: max-content;
-  max-width: 100%;
-  overflow: auto;
-  margin-bottom: 16px;
-}
-
-#markdown-content-container table th,
-#markdown-content-container table td {
-  padding: 6px 13px;
-  border: 1px solid #d0d7de;
-}
-
-#markdown-content-container table th {
-  font-weight: 600;
-  background-color: #f6f8fa;
-}
-
-#markdown-content-container table tr {
-  background-color: #ffffff;
-  border-top: 1px solid #d0d7de;
-}
-
-#markdown-content-container table tr:nth-child(2n) {
-  background-color: #f6f8fa;
-}
-
-/* Horizontal rules */
-#markdown-content-container hr {
-  height: 0.25em;
-  padding: 0;
-  margin: 24px 0;
-  background-color: #d0d7de;
-  border: 0;
-}
-
-/* Images */
-#markdown-content-container img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 6px;
-  margin: 16px 0;
-}
-
-/* Admonitions */
-.admonition {
-  padding: 16px;
-  margin-bottom: 16px;
-  border-left: 4px solid;
-  border-radius: 6px;
-  background-color: #f6f8fa;
-}
-
-.admonition-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.admonition-icon {
-  font-size: 18px;
-}
-
-.admonition-content {
-  margin-left: 26px;
-}
-
-.admonition-content > :first-child {
-  margin-top: 0;
-}
-
-.admonition-content > :last-child {
-  margin-bottom: 0;
-}
-
-/* Text transformations */
-mark {
-  background-color: #fff3cd;
-  padding: 0.2em 0.4em;
-  border-radius: 3px;
-}
-
-.suptext {
-  font-size: 75%;
-  vertical-align: super;
-}
-
-.subtext {
-  font-size: 75%;
-  vertical-align: sub;
-}
-
-/* Inserted text */
-ins {
-  text-decoration: none;
-  background-color: #d4edda;
-  padding: 0.2em 0.4em;
-  border-radius: 3px;
-}
-
-/* Syntax highlighting overrides */
-.hljs {
-  background: transparent;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  #markdown-content-container {
-    padding: 20px 16px;
+<file path="src/App.svelte">
+<script>
+  import { onMount } from 'svelte';
+  import Sidebar from './components/Sidebar.svelte';
+  import MarkdownRenderer from './components/MarkdownRenderer.svelte';
+  // Prop passed from main.js containing the original pre-rendered text
+  export let initialMarkdownContent = '';
+  let sidebarOpen = true;
+  let currentFile = '';
+  let directoryFiles = [];
+  let documentOutline = [];
+  // Use the passed content for initial render
+  let markdownContent = initialMarkdownContent;
+  let renderedHtml = '';
+  onMount(() => {
+    currentFile = window.location.pathname;
+    // If content wasn't passed via props (fallback), try to extract it
+    if (!markdownContent) {
+      extractMarkdownContent();
+    }
+  });
+  function extractMarkdownContent() {
+    const preElement = document.querySelector('pre');
+    if (preElement && preElement.textContent) {
+      markdownContent = preElement.textContent;
+    }
   }
-  
-  #markdown-content-container h1 {
-    font-size: 1.75em;
+  function toggleSidebar() {
+    sidebarOpen = !sidebarOpen;
   }
-  
-  #markdown-content-container h2 {
-    font-size: 1.5em;
+  // FIX: Destructure detail from the event object
+  function handleOutlineGenerated(event) {
+    documentOutline = event.detail;
   }
-  
-  #markdown-content-container pre {
-    padding: 12px;
+  // FIX: Destructure detail from the event object
+  function handleFilesDiscovered(event) {
+    directoryFiles = event.detail;
   }
-}
-
-/* Smooth scroll behavior */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Selection */
-::selection {
-  background-color: rgba(0, 102, 204, 0.2);
-}
+  function handleFileChange(event) {
+    const newFile = event.detail;
+    window.location.href = newFile;
+  }
+  // FIX: Destructure detail from the event object
+  function handleRendered(event) {
+    renderedHtml = event.detail;
+  }
+</script>
+<svelte:head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkP..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="content.css" type="text/css" />
+  <link rel="shortcut icon" href="icons/icon128.png" type="image/png" />
+</svelte:head>
+<div class="app-container" class:sidebar-open={sidebarOpen}>
+  <button class="sidebar-toggle" on:click={toggleSidebar} aria-label="Toggle sidebar">
+    <i class="fas {sidebarOpen ? 'fa-chevron-left' : 'fa-chevron-right'}"></i>
+  </button>
+  <Sidebar 
+    {sidebarOpen}
+    {currentFile}
+    {documentOutline}
+    {directoryFiles}
+    on:filechange={handleFileChange}
+  />
+  <main class="content-wrapper">
+    <MarkdownRenderer 
+      {markdownContent}
+      on:outlinegenerated={handleOutlineGenerated}
+      on:filesdiscovered={handleFilesDiscovered}
+      on:rendered={handleRendered}
+    />
+  </main>
+</div>
+<style>
+  :global(body) {
+    margin: 0;
+    padding: 0;
+    font-family: var(--sans);
+  }
+  .app-container {
+    display: flex;
+    min-height: 100vh;
+    position: relative;
+  }
+  .sidebar-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1001;
+    background: #09090aaa;
+    border: var(--borderLight);
+    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .sidebar-toggle:hover {
+    background: #f5f5f510;
+    box-shadow: var(--premShadow);
+  }
+  .sidebar-open .sidebar-toggle {
+    left: 320px;
+  }
+  .content-wrapper {
+    flex: 1;
+    transition: margin-left 300ms ease-in-out;
+    margin-left: 0;
+  }
+  .sidebar-open .content-wrapper {
+    margin-left: 300px;
+  }
+  @media (max-width: 768px) {
+    .sidebar-open .sidebar-toggle {
+      left: 20px;
+    }
+    .sidebar-open .content-wrapper {
+      margin-left: 0;
+    }
+  }
+</style>
 </file>
-
-<file path="sven.xml">
-This file is a merged representation of the entire codebase, combined into a single document by Repomix.
-
-<file_summary>
-This section contains a summary of this file.
-
-<purpose>
-This file contains a packed representation of the entire repository's contents.
-It is designed to be easily consumable by AI systems for analysis, code review,
-or other automated processes.
-</purpose>
-
-<file_format>
-The content is organized as follows:
-1. This summary section
-2. Repository information
-3. Directory structure
-4. Repository files (if enabled)
-5. Multiple file entries, each consisting of:
-  - File path as an attribute
-  - Full contents of the file
-</file_format>
-
-<usage_guidelines>
-- This file should be treated as read-only. Any changes should be made to the
-  original repository files, not this packed version.
-- When processing this file, use the file path to distinguish
-  between different files in the repository.
-- Be aware that this file may contain sensitive information. Handle it with
-  the same level of security as you would the original repository.
-</usage_guidelines>
-
-<notes>
-- Some files may have been excluded based on .gitignore rules and Repomix's configuration
-- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
-- Files matching patterns in .gitignore are excluded
-- Files matching default ignore patterns are excluded
-- Files are sorted by Git change count (files with more changes are at the bottom)
-</notes>
-
-</file_summary>
-
-<directory_structure>
-icons/
-  icon128.png
-  icon16.png
-  icon48.png
-src/
-  components/
-    FilesTab.svelte
-    MarkdownRenderer.svelte
-    OutlineTab.svelte
-    Sidebar.svelte
-  App.svelte
-  main.js
-  rollup.config.js
-manifest.json
-package.json
-README.md
-style.css
-</directory_structure>
-
-<files>
-This section contains the contents of the repository's files.
 
 <file path="src/components/FilesTab.svelte">
 <script>
   import { createEventDispatcher } from 'svelte';
-  
   export let directoryFiles = [];
   export let currentFile = '';
-  
   const dispatch = createEventDispatcher();
-  
   function selectFile(filepath) {
     dispatch('fileselect', filepath);
   }
-  
   function getFileName(path) {
     return path.split('/').pop();
   }
-  
   function isCurrentFile(filepath) {
     return filepath === currentFile || getFileName(filepath) === getFileName(currentFile);
   }
-  
   function getFileIcon(filename) {
     const ext = filename.split('.').pop().toLowerCase();
     if (ext === 'md' || ext === 'markdown') return 'fa-file-lines';
@@ -2277,7 +852,6 @@ This section contains the contents of the repository's files.
     return 'fa-file';
   }
 </script>
-
 <div class="files-tab">
   {#if directoryFiles.length === 0}
     <div class="empty-state">
@@ -2308,35 +882,32 @@ This section contains the contents of the repository's files.
     </ul>
   {/if}
 </div>
-
 <style>
+  ::webkit-scrollbar {
+    display: none;
+  }
   .files-tab {
     padding: 16px;
   }
-  
   .empty-state {
     text-align: center;
     padding: 40px 20px;
     color: #999;
   }
-  
   .empty-state i {
     font-size: 48px;
     margin-bottom: 16px;
     opacity: 0.5;
   }
-  
   .empty-state p {
     margin: 0;
     font-size: 14px;
   }
-  
   .files-header {
     padding: 8px 12px;
     margin-bottom: 8px;
     border-bottom: 1px solid #e0e0e0;
   }
-  
   .file-count {
     font-size: 12px;
     color: #666;
@@ -2344,17 +915,14 @@ This section contains the contents of the repository's files.
     letter-spacing: 0.5px;
     font-weight: 600;
   }
-  
   .files-list {
     list-style: none;
     padding: 0;
     margin: 0;
   }
-  
   .file-item {
     margin: 0;
   }
-  
   .file-link {
     display: flex;
     align-items: center;
@@ -2371,35 +939,29 @@ This section contains the contents of the repository's files.
     font-size: 14px;
     position: relative;
   }
-  
   .file-link:hover {
     background: #f5f5f5;
   }
-  
   .file-link.active {
     background: #e6f2ff;
     color: #0066cc;
     font-weight: 500;
   }
-  
   .file-icon {
     flex-shrink: 0;
     width: 16px;
     color: #0066cc;
     opacity: 0.7;
   }
-  
   .file-link.active .file-icon {
     opacity: 1;
   }
-  
   .file-name {
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  
   .current-indicator {
     flex-shrink: 0;
     font-size: 12px;
@@ -2411,14 +973,12 @@ This section contains the contents of the repository's files.
 <file path="src/components/MarkdownRenderer.svelte">
 <script>
   import { onMount, createEventDispatcher } from 'svelte';
-  
   export let markdownContent = '';
-  
   const dispatch = createEventDispatcher();
   let contentContainer;
   let isProcessing = true;
   let errorMessage = null;
-  
+  let renderedHtml = '';
   // Language to Font Awesome icon mapping
   const languageIcons = {
     javascript: "fab fa-js-square",
@@ -2479,12 +1039,10 @@ This section contains the contents of the repository's files.
     txt: "fas fa-file-alt",
     default: "fas fa-code",
   };
-  
   onMount(async () => {
     await processMarkdown();
     await discoverDirectoryFiles();
   });
-  
   async function processMarkdown() {
     try {
       if (!markdownContent) {
@@ -2492,10 +1050,8 @@ This section contains the contents of the repository's files.
         isProcessing = false;
         return;
       }
-      
       // Load all required modules
       const modules = await loadModules();
-      
       // Process markdown
       const processor = modules.unified()
         .use(modules.remarkParse)
@@ -2520,29 +1076,23 @@ This section contains the contents of the repository's files.
         .use(rehypeCodeLanguageIcons)
         .use(rehypeAdmonitions)
         .use(modules.rehypeStringify, { allowDangerousHtml: true });
-      
       const file = await processor.process(markdownContent);
-      const renderedHtml = String(file);
-      
+      renderedHtml = String(file);
       // Extract document outline
       extractDocumentOutline();
-      
       dispatch('rendered', renderedHtml);
       isProcessing = false;
-      
       // Wait for DOM update then add interactive features
       setTimeout(() => {
         addCodeCopyButtons();
         applyTextTransformations();
       }, 100);
-      
     } catch (error) {
       console.error("Error rendering markdown:", error);
       errorMessage = error.message;
       isProcessing = false;
     }
   }
-  
   async function loadModules() {
     try {
       const modules = await Promise.all([
@@ -2564,7 +1114,6 @@ This section contains the contents of the repository's files.
         import("rehype-autolink-headings"),
         import("remark-github-admonitions-to-directives"),
       ]);
-      
       return {
         unified: modules[0].unified,
         remarkParse: modules[1].default,
@@ -2589,30 +1138,24 @@ This section contains the contents of the repository's files.
       throw new Error("Could not load required markdown processing modules");
     }
   }
-  
   // Text transformation functions
   function ellipses(input) {
     return input.replace(/\.{3}/gim, "…");
   }
-  
   function addMarkTags(text) {
     const markRegex = /==(.*?)==/g;
     return text.replace(markRegex, "<mark>$1</mark>");
   }
-  
   function addSuperScript(text) {
     const superRegex = /\^(.*?)\^/g;
     return text.replace(superRegex, '<sup class="suptext">$1</sup>');
   }
-  
   function addSubScript(text) {
     const subRegex = /\_-(.*?)-\_/g;
     return text.replace(subRegex, '<sub class="subtext">$1</sub>');
   }
-  
   function applyTextTransformations() {
     if (!contentContainer) return;
-    
     const walker = document.createTreeWalker(
       contentContainer,
       NodeFilter.SHOW_TEXT,
@@ -2627,35 +1170,28 @@ This section contains the contents of the repository's files.
         },
       }
     );
-    
     const textNodes = [];
     let node;
     while ((node = walker.nextNode())) {
       textNodes.push(node);
     }
-    
     textNodes.forEach((textNode) => {
       let content = textNode.textContent;
       const originalContent = content;
-      
       content = addMarkTags(content);
       content = addSuperScript(content);
       content = addSubScript(content);
-      
       if (content !== originalContent) {
         const tempDiv = document.createElement("div");
         tempDiv.innerHTML = content;
-        
         const fragment = document.createDocumentFragment();
         while (tempDiv.firstChild) {
           fragment.appendChild(tempDiv.firstChild);
         }
-        
         textNode.parentNode.replaceChild(fragment, textNode);
       }
     });
   }
-  
   // Helper function to traverse AST nodes
   function visit(node, callback) {
     callback(node);
@@ -2663,7 +1199,6 @@ This section contains the contents of the repository's files.
       node.children.forEach((child) => visit(child, callback));
     }
   }
-  
   // Rehype plugin for code language icons
   function rehypeCodeLanguageIcons() {
     return (tree) => {
@@ -2672,21 +1207,17 @@ This section contains the contents of the repository's files.
           const codeElement = node.children.find(
             (child) => child.type === "element" && child.tagName === "code"
           );
-          
           if (codeElement && codeElement.properties && codeElement.properties.className) {
             const languageClass = codeElement.properties.className.find((cls) =>
               cls.startsWith("language-")
             );
-            
             if (languageClass) {
               const language = languageClass.replace("language-", "").toLowerCase();
               const iconClass = languageIcons[language] || languageIcons.default;
-              
               if (!node.properties) node.properties = {};
               if (!node.properties.className) node.properties.className = [];
               node.properties.className.push("has-language");
               node.properties["data-language"] = language;
-              
               const languageIcon = {
                 type: "element",
                 tagName: "div",
@@ -2705,7 +1236,6 @@ This section contains the contents of the repository's files.
                   },
                 ],
               };
-              
               node.children.unshift(languageIcon);
             }
           }
@@ -2713,7 +1243,6 @@ This section contains the contents of the repository's files.
       });
     };
   }
-  
   // Rehype plugin for admonitions
   function rehypeAdmonitions() {
     const typeConfig = {
@@ -2723,7 +1252,6 @@ This section contains the contents of the repository's files.
       warning: { icon: "fa-triangle-exclamation", color: "#9a6700" },
       caution: { icon: "fa-octagon-exclamation", color: "#cf222e" },
     };
-    
     return (tree) => {
       visit(tree, (node) => {
         if (
@@ -2734,12 +1262,10 @@ This section contains the contents of the repository's files.
         ) {
           const directiveName = node.properties.dataDirectiveName.toLowerCase();
           const config = typeConfig[directiveName];
-          
           if (config) {
             if (!node.properties.className) node.properties.className = [];
             node.properties.className.push("admonition", `admonition-${directiveName}`);
             node.properties.style = `border-left-color: ${config.color};`;
-            
             const iconElement = {
               type: "element",
               tagName: "i",
@@ -2749,7 +1275,6 @@ This section contains the contents of the repository's files.
               },
               children: [],
             };
-            
             const titleElement = {
               type: "element",
               tagName: "div",
@@ -2769,21 +1294,18 @@ This section contains the contents of the repository's files.
                 },
               ],
             };
-            
             const contentWrapper = {
               type: "element",
               tagName: "div",
               properties: { className: ["admonition-content"] },
               children: node.children,
             };
-            
             node.children = [titleElement, contentWrapper];
           }
         }
       });
     };
   }
-  
   function extractDocumentOutline() {
     setTimeout(() => {
       const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
@@ -2792,49 +1314,38 @@ This section contains the contents of the repository's files.
         text: heading.textContent.replace('#', '').trim(),
         level: parseInt(heading.tagName.substring(1))
       }));
-      
       dispatch('outlinegenerated', outline);
     }, 200);
   }
-  
   async function discoverDirectoryFiles() {
     try {
       const currentPath = window.location.pathname;
       const directoryPath = currentPath.substring(0, currentPath.lastIndexOf('/'));
-      
       // In a real Chrome extension, you'd use chrome.fileSystem API or similar
       // For now, we'll simulate this with a placeholder
       // This would need to be implemented with proper file system access
       const files = [];
-      
       dispatch('filesdiscovered', files);
     } catch (error) {
       console.error("Error discovering directory files:", error);
     }
   }
-  
   function addCodeCopyButtons() {
     const defaultSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" id="copyicon"><path fill="currentColor" d="M17.997 4.17A3 3 0 0 1 20 7v12a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 2.003-2.83A4 4 0 0 0 10 8h4a4 4 0 0 0 3.98-3.597zM14 2a2 2 0 1 1 0 4h-4a2 2 0 1 1 0-4z"/></svg>';
     const successSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="17" id="copysuccess"><g fill="none"><path fill="currentColor" fill-opacity="0.16" d="M8 3H5.4A2.4 2.4 0 0 0 3 5.4v15.2A2.4 2.4 0 0 0 5.4 23h13.2a2.4 2.4 0 0 0 2.4-2.4V5.4A2.4 2.4 0 0 0 18.6 3H16v1.2a.8.8 0 0 1-.8.8H8.8a.8.8 0 0 1-.8-.8z"/><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 3h2.6A2.4 2.4 0 0 1 21 5.4v15.2a2.4 2.4 0 0 1-2.4 2.4H5.4A2.4 2.4 0 0 1 3 20.6V5.4A2.4 2.4 0 0 1 5.4 3H8m0 11l3 3l5-7M8.8 1h6.4a.8.8 0 0 1 .8.8v2.4a.8.8 0 0 1-.8.8H8.8a.8.8 0 0 1-.8-.8V1.8a.8.8 0 0 1 .8-.8"/></g></svg>';
-    
     const codeBlocks = document.querySelectorAll("pre");
-    
     codeBlocks.forEach((block) => {
       const codeElement = block.querySelector("code");
       if (!codeElement) return;
-      
       const button = document.createElement("button");
       button.className = "copy-code-button";
       button.innerHTML = defaultSVG;
-      
       button.addEventListener("click", async () => {
         try {
           const codeToCopy = codeElement.innerText;
           await navigator.clipboard.writeText(codeToCopy);
-          
           button.innerHTML = successSVG;
           button.classList.add("copied");
-          
           setTimeout(() => {
             button.innerHTML = defaultSVG;
             button.classList.remove("copied");
@@ -2847,12 +1358,10 @@ This section contains the contents of the repository's files.
           }, 2000);
         }
       });
-      
       block.insertBefore(button, block.firstChild);
     });
   }
 </script>
-
 {#if isProcessing}
   <div class="loading-container">
     <div class="loading-content">
@@ -2872,10 +1381,9 @@ This section contains the contents of the repository's files.
   </div>
 {:else}
   <div id="markdown-content-container" bind:this={contentContainer}>
-    {@html markdownContent}
+    {@html renderedHtml}
   </div>
 {/if}
-
 <style>
   .loading-container,
   .error-container {
@@ -2885,38 +1393,32 @@ This section contains the contents of the repository's files.
     min-height: 100vh;
     padding: 40px;
   }
-  
   .loading-content,
   .error-content {
     text-align: center;
     max-width: 600px;
   }
-  
   .loading-content i {
     font-size: 48px;
     color: #0066cc;
     margin-bottom: 24px;
   }
-  
   .error-content i {
     font-size: 48px;
     color: #cf222e;
     margin-bottom: 24px;
   }
-  
   .loading-content h2,
   .error-content h2 {
     font-size: 24px;
     margin: 0 0 12px 0;
     color: #333;
   }
-  
   .loading-content p,
   .error-content p {
     color: #666;
     margin: 0;
   }
-  
   .error-content pre {
     margin-top: 20px;
     padding: 16px;
@@ -2927,13 +1429,11 @@ This section contains the contents of the repository's files.
     white-space: pre-wrap;
     color: #cf222e;
   }
-  
   #markdown-content-container {
     max-width: 900px;
     margin: 0 auto;
     padding: 40px 20px;
   }
-  
   /* Copy button styles */
   :global(.copy-code-button) {
     position: absolute;
@@ -2947,17 +1447,14 @@ This section contains the contents of the repository's files.
     transition: all 0.2s ease;
     z-index: 10;
   }
-  
   :global(.copy-code-button:hover) {
     background: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
-  
   :global(.copy-code-button.copied) {
     background: #d4edda;
     border-color: #28a745;
   }
-  
   :global(pre) {
     position: relative;
   }
@@ -2967,7 +1464,6 @@ This section contains the contents of the repository's files.
 <file path="src/components/OutlineTab.svelte">
 <script>
   export let documentOutline = [];
-  
   function scrollToHeading(id) {
     const element = document.getElementById(id);
     if (element) {
@@ -2979,12 +1475,10 @@ This section contains the contents of the repository's files.
       }, 2000);
     }
   }
-  
   function getIndentClass(level) {
     return `level-${Math.min(level, 6)}`;
   }
 </script>
-
 <div class="outline-tab">
   {#if documentOutline.length === 0}
     <div class="empty-state">
@@ -3016,39 +1510,35 @@ This section contains the contents of the repository's files.
     </ul>
   {/if}
 </div>
-
 <style>
+  ::webkit-scrollbar {
+    display: none;
+  }
   .outline-tab {
     padding: 16px;
   }
-  
   .empty-state {
     text-align: center;
     padding: 40px 20px;
     color: #999;
   }
-  
   .empty-state i {
     font-size: 48px;
     margin-bottom: 16px;
     opacity: 0.5;
   }
-  
   .empty-state p {
     margin: 0;
     font-size: 14px;
   }
-  
   .outline-list {
     list-style: none;
     padding: 0;
     margin: 0;
   }
-  
   .outline-item {
     margin: 0;
   }
-  
   .outline-link {
     display: flex;
     align-items: flex-start;
@@ -3061,16 +1551,14 @@ This section contains the contents of the repository's files.
     cursor: pointer;
     border-radius: 6px;
     transition: all 0.2s ease;
-    color: #333;
+    color: #a0a0a0;
     font-size: 14px;
     line-height: 1.5;
   }
-  
   .outline-link:hover {
-    background: #f5f5f5;
+    background: #f5f5f505;
     color: #0066cc;
   }
-  
   .heading-marker {
     flex-shrink: 0;
     width: 20px;
@@ -3080,44 +1568,35 @@ This section contains the contents of the repository's files.
     color: #0066cc;
     opacity: 0.7;
   }
-  
   .heading-text {
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  
   /* Indentation levels */
   .level-1 {
     padding-left: 0;
   }
-  
   .level-2 {
     padding-left: 12px;
   }
-  
   .level-3 {
     padding-left: 24px;
   }
-  
   .level-4 {
     padding-left: 36px;
   }
-  
   .level-5 {
     padding-left: 48px;
   }
-  
   .level-6 {
     padding-left: 60px;
   }
-  
   /* Global style for heading highlight effect */
   :global(.highlight-heading) {
     animation: highlightPulse 2s ease;
   }
-  
   @keyframes highlightPulse {
     0%, 100% {
       background-color: transparent;
@@ -3134,30 +1613,24 @@ This section contains the contents of the repository's files.
   import { createEventDispatcher } from 'svelte';
   import OutlineTab from './OutlineTab.svelte';
   import FilesTab from './FilesTab.svelte';
-  
   export let sidebarOpen = true;
   export let currentFile = '';
   export let documentOutline = [];
   export let directoryFiles = [];
-  
   let activeTab = 'outline';
   const dispatch = createEventDispatcher();
-  
   function switchTab(tab) {
     activeTab = tab;
   }
-  
   function handleFileSelect(event) {
     dispatch('filechange', event.detail);
   }
 </script>
-
 <aside class="sidebar" class:open={sidebarOpen}>
   <div class="sidebar-content">
     <div class="sidebar-header">
-      <h2>Navigation</h2>
+      <h2>ven</h2>
     </div>
-    
     <div class="tabs">
       <button 
         class="tab-button" 
@@ -3165,7 +1638,7 @@ This section contains the contents of the repository's files.
         on:click={() => switchTab('outline')}
       >
         <i class="fas fa-list-ul"></i>
-        <span>Outline</span>
+        <span></span>
       </button>
       <button 
         class="tab-button" 
@@ -3173,10 +1646,9 @@ This section contains the contents of the repository's files.
         on:click={() => switchTab('files')}
       >
         <i class="fas fa-folder-open"></i>
-        <span>Files</span>
+        <span></span>
       </button>
     </div>
-    
     <div class="tab-content">
       {#if activeTab === 'outline'}
         <OutlineTab {documentOutline} />
@@ -3190,53 +1662,50 @@ This section contains the contents of the repository's files.
     </div>
   </div>
 </aside>
-
 <style>
+  ::webkit-scrollbar {
+    display: none;
+  }
   .sidebar {
     position: fixed;
     top: 0;
     left: -300px;
     width: 300px;
     height: 100vh;
-    background: #ffffff;
-    border-right: 1px solid #e0e0e0;
+    background: #09090a;
+    border-right: var(--borderLight);
     transition: left 0.3s ease;
     z-index: 1000;
     overflow: hidden;
     display: flex;
     flex-direction: column;
   }
-  
   .sidebar.open {
     left: 0;
   }
-  
   .sidebar-content {
     display: flex;
     flex-direction: column;
     height: 100%;
     overflow: hidden;
   }
-  
   .sidebar-header {
-    padding: 20px;
-    border-bottom: 1px solid #e0e0e0;
-    background: #fafafa;
+    padding: 8px;
+    align-self: anchor-center;
+    border-bottom: none;
+    background: #fafafa00;
   }
-  
   .sidebar-header h2 {
     margin: 0;
     font-size: 18px;
     font-weight: 600;
     color: #333;
   }
-  
   .tabs {
     display: flex;
-    border-bottom: 1px solid #e0e0e0;
-    background: #fafafa;
+    border-bottom: var(--borderLight);
+    background: #fafafa00;
   }
-  
   .tab-button {
     flex: 1;
     padding: 12px 16px;
@@ -3249,20 +1718,17 @@ This section contains the contents of the repository's files.
     gap: 8px;
     font-size: 14px;
     color: #666;
-    transition: all 0.2s ease;
+    transition: all 200ms ease-in;
     position: relative;
   }
-  
   .tab-button:hover {
-    background: #f0f0f0;
+    background: #f0f0f010;
     color: #333;
   }
-  
   .tab-button.active {
     color: #0066cc;
     font-weight: 600;
   }
-  
   .tab-button.active::after {
     content: '';
     position: absolute;
@@ -3272,19 +1738,16 @@ This section contains the contents of the repository's files.
     height: 2px;
     background: #0066cc;
   }
-  
   .tab-content {
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
   }
-  
   @media (max-width: 768px) {
     .sidebar {
       width: 100%;
       left: -100%;
     }
-    
     .sidebar.open {
       left: 0;
     }
@@ -3292,170 +1755,46 @@ This section contains the contents of the repository's files.
 </style>
 </file>
 
-<file path="src/App.svelte">
-<script>
-  import { onMount } from 'svelte';
-  import Sidebar from './components/Sidebar.svelte';
-  import MarkdownRenderer from './components/MarkdownRenderer.svelte';
-  
-  let sidebarOpen = true;
-  let currentFile = '';
-  let directoryFiles = [];
-  let documentOutline = [];
-  let markdownContent = '';
-  let renderedHtml = '';
-  
-  onMount(() => {
-    currentFile = window.location.pathname;
-    extractMarkdownContent();
-  });
-  
-  function extractMarkdownContent() {
-    const preElement = document.querySelector('pre');
-    if (preElement && preElement.textContent) {
-      markdownContent = preElement.textContent;
-    }
-  }
-  
-  function toggleSidebar() {
-    sidebarOpen = !sidebarOpen;
-  }
-  
-  function handleOutlineGenerated(outline) {
-    documentOutline = outline;
-  }
-  
-  function handleFilesDiscovered(files) {
-    directoryFiles = files;
-  }
-  
-  function handleFileChange(event) {
-    const newFile = event.detail;
-    window.location.href = newFile;
-  }
-  
-  function handleRendered(html) {
-    renderedHtml = html;
-  }
-</script>
-
-<svelte:head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</svelte:head>
-
-<div class="app-container" class:sidebar-open={sidebarOpen}>
-  <button class="sidebar-toggle" on:click={toggleSidebar} aria-label="Toggle sidebar">
-    <i class="fas {sidebarOpen ? 'fa-chevron-left' : 'fa-chevron-right'}"></i>
-  </button>
-  
-  <Sidebar 
-    {sidebarOpen}
-    {currentFile}
-    {documentOutline}
-    {directoryFiles}
-    on:filechange={handleFileChange}
-  />
-  
-  <main class="content-wrapper">
-    <MarkdownRenderer 
-      {markdownContent}
-      on:outlinegenerated={handleOutlineGenerated}
-      on:filesdiscovered={handleFilesDiscovered}
-      on:rendered={handleRendered}
-    />
-  </main>
-</div>
-
-<style>
-  :global(body) {
-    margin: 0;
-    padding: 0;
-    font-family: "Zed Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  }
-  
-  .app-container {
-    display: flex;
-    min-height: 100vh;
-    position: relative;
-  }
-  
-  .sidebar-toggle {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    z-index: 1001;
-    background: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
-  }
-  
-  .sidebar-toggle:hover {
-    background: #f5f5f5;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  .sidebar-open .sidebar-toggle {
-    left: 320px;
-  }
-  
-  .content-wrapper {
-    flex: 1;
-    transition: margin-left 0.3s ease;
-    margin-left: 0;
-  }
-  
-  .sidebar-open .content-wrapper {
-    margin-left: 300px;
-  }
-  
-  @media (max-width: 768px) {
-    .sidebar-open .sidebar-toggle {
-      left: 20px;
-    }
-    
-    .sidebar-open .content-wrapper {
-      margin-left: 0;
-    }
-  }
-</style>
-</file>
-
 <file path="src/main.js">
 import App from './App.svelte';
-
+import '../style.css';
 // Wait for DOM to be ready
 function init() {
-  // Check if this is a markdown file
+  console.log("Sven Extension: Initializing...");
+  // Check if this is a markdown file based on extension
+  const path = window.location.pathname.toLowerCase();
   const isMarkdownFile =
-    window.location.pathname.endsWith('.md') ||
-    window.location.pathname.endsWith('.markdown') ||
-    window.location.pathname.endsWith('.mdown');
-  
+    path.endsWith('.md') ||
+    path.endsWith('.markdown') ||
+    path.endsWith('.mdown');
   if (!isMarkdownFile) {
-    console.log('Not a markdown file, extension will not activate');
+    console.log('Sven Extension: Not a markdown file, skipping.');
     return;
   }
-  
+  // Prevent double-initialization
+  if (document.getElementById('sven-app-root')) return;
+  // Extract the markdown content BEFORE clearing the body
+  let initialContent = '';
+  const preElement = document.querySelector('pre');
+  if (preElement) {
+    initialContent = preElement.textContent;
+  } else {
+    // Fallback: chrome sometimes renders text without a pre tag for very large files or specific encodings
+    initialContent = document.body.innerText;
+  }
+  if (!initialContent.trim()) {
+    console.warn("Sven Extension: No content found to render.");
+  }
   // Clear the body and mount Svelte app
-  document.body.innerHTML = '<div id="app"></div>';
-  
+  document.body.innerHTML = '<div id="sven-app-root"></div>';
   const app = new App({
-    target: document.getElementById('app'),
+    target: document.getElementById('sven-app-root'),
+    props: {
+      initialMarkdownContent: initialContent
+    }
   });
-  
   return app;
 }
-
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', init);
@@ -3464,339 +1803,39 @@ if (document.readyState === 'loading') {
 }
 </file>
 
-<file path="src/rollup.config.js">
-import svelte from 'rollup-plugin-svelte';
-import resolve from '@rollup/plugin-node-resolve';
-import commonjs from '@rollup/plugin-commonjs';
-import terser from '@rollup/plugin-terser';
-import css from 'rollup-plugin-css-only';
-
-const production = !process.env.ROLLUP_WATCH;
-
-export default {
-  input: 'main.js',
-  output: {
-    sourcemap: !production,
-    format: 'iife',
-    name: 'app',
-    file: 'build/bundle.js'
-  },
-  plugins: [
-    svelte({
-      compilerOptions: {
-        dev: !production
-      }
-    }),
-    css({ output: 'bundle.css' }),
-    resolve({
-      browser: true,
-      dedupe: ['svelte'],
-      exportConditions: ['svelte']
-    }),
-    commonjs(),
-    production && terser()
-  ],
-  watch: {
-    clearScreen: false
-  }
-};
-</file>
-
-<file path="manifest.json">
-{
-  "manifest_version": 3,
-  "name": "Sven",
-  "version": "2.0.0",
-  "description": "Renders local markdown files with an interactive sidebar for navigation and file browsing",
-  "permissions": [
-    "file://*"
-  ],
-  "content_scripts": [
-    {
-      "matches": [
-        "file://*/*.md",
-        "file://*/*.markdown",
-        "file://*/*.mdown"
-      ],
-      "js": [
-        "build/bundle.js"
-      ],
-      "css": [
-        "style.css"
-      ],
-      "run_at": "document_end"
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "style.css",
-        "build/*"
-      ],
-      "matches": [
-        "file://*"
-      ]
-    }
-  ],
-  "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  }
-}
-</file>
-
-<file path="package.json">
-{
-  "name": "sven",
-  "version": "2.0.0",
-  "description": "Chrome extension for rendering markdown files with Svelte",
-  "type": "module",
-  "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
-    "validate": "svelte-check"
-  },
-  "devDependencies": {
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-terser": "^0.4.4",
-    "rollup": "^4.9.4",
-    "rollup-plugin-css-only": "^4.5.2",
-    "rollup-plugin-svelte": "^7.1.6",
-    "svelte": "^4.2.8",
-    "svelte-check": "^3.6.3"
-  },
-  "dependencies": {
-    "@fec/remark-a11y-emoji": "^4.0.2",
-    "rehype-autolink-headings": "^7.1.0",
-    "rehype-highlight": "^7.0.0",
-    "rehype-slug": "^6.0.0",
-    "rehype-stringify": "^10.0.0",
-    "remark-directive": "^3.0.0",
-    "remark-flexible-containers": "^2.0.1",
-    "remark-flexible-paragraphs": "^2.0.1",
-    "remark-frontmatter": "^5.0.0",
-    "remark-gfm": "^4.0.0",
-    "remark-github-admonitions-to-directives": "^2.0.1",
-    "remark-ins": "^2.0.0",
-    "remark-parse": "^11.0.0",
-    "remark-rehype": "^11.1.0",
-    "remark-sectionize": "^2.0.0",
-    "remark-supersub": "^1.0.0",
-    "remark-textr": "^6.0.0",
-    "remark-toc": "^9.0.0",
-    "unified": "^11.0.4"
-  }
-}
-</file>
-
-<file path="README.md">
-# Markdown Renderer with Interactive Sidebar
-
-A modern Chrome extension built with Svelte that renders local markdown files with an interactive sidebar for navigation and file browsing.
-
-## Features
-
-### 🎯 Interactive Sidebar
-- **Document Outline Tab**: Automatically generates a table of contents from heading structure (H1-H6)
-- **Files Tab**: Browse and switch between markdown files in the same directory
-- **Collapsible**: Toggle sidebar visibility with a floating button
-- **Smooth Navigation**: Click headings to scroll smoothly to sections
-
-### 📝 Advanced Markdown Rendering
-- Full GitHub Flavored Markdown (GFM) support
-- Syntax highlighting for code blocks with language icons
-- Admonitions (Note, Tip, Important, Warning, Caution)
-- Task lists with checkboxes
-- Tables with styling
-- Custom text transformations:
-  - Highlighted text: `==text==`
-  - Superscript: `^text^`
-  - Subscript: `_-text-_`
-- Front matter support (YAML, TOML)
-- Auto-linked headings
-- Emoji support
-- And much more!
-
-### 🎨 Professional Design
-- Clean, modern interface
-- Responsive layout
-- Smooth animations and transitions
-- Copy-to-clipboard buttons on code blocks
-- Language-specific icons for code blocks
-
-## Installation
-
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
-- Google Chrome browser
-
-### Development Setup
-
-1. **Clone or download the extension files**
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Build the extension**
-   ```bash
-   npm run build
-   ```
-   
-   For development with auto-rebuild:
-   ```bash
-   npm run dev
-   ```
-
-4. **Load the extension in Chrome**
-   - Open Chrome and navigate to `chrome://extensions/`
-   - Enable "Developer mode" (toggle in top-right corner)
-   - Click "Load unpacked"
-   - Select the extension directory (where `manifest.json` is located)
-
-5. **Enable file access**
-   - In `chrome://extensions/`, find the loaded extension
-   - Click "Details"
-   - Enable "Allow access to file URLs"
-
-## Usage
-
-1. **Open a local markdown file** in Chrome using `file://` protocol
-   - Example: `file:///Users/username/Documents/README.md`
-
-2. **The extension will automatically**:
-   - Render the markdown with full styling
-   - Generate a document outline in the sidebar
-   - Discover other markdown files in the same directory (when supported)
-
-3. **Navigate with the sidebar**:
-   - Click the toggle button (top-left) to show/hide sidebar
-   - Switch between "Outline" and "Files" tabs
-   - Click any heading in the outline to jump to that section
-   - Click any file to open it
-
-## Project Structure
-
-```
-markdown-renderer-svelte/
-├── components/
-│   ├── Sidebar.svelte          # Main sidebar container
-│   ├── OutlineTab.svelte        # Document outline tab
-│   ├── FilesTab.svelte          # File browser tab
-│   └── MarkdownRenderer.svelte  # Core markdown processing
-├── App.svelte                   # Root Svelte component
-├── main.js                      # Entry point
-├── manifest.json                # Chrome extension manifest
-├── package.json                 # Dependencies and scripts
-├── rollup.config.js             # Svelte build configuration
-├── style.css                    # Global styles
-└── README.md                    # This file
-```
-
-## Development
-
-### Scripts
-
-- `npm run build` - Build for production
-- `npm run dev` - Build and watch for changes
-- `npm run validate` - Run Svelte type checking
-
-### Key Technologies
-
-- **Svelte 4**: Reactive UI framework
-- **Rollup**: Module bundler
-- **Unified/Remark/Rehype**: Markdown processing pipeline
-- **rehype-highlight**: Syntax highlighting
-- **remark-gfm**: GitHub Flavored Markdown
-
-### Customization
-
-#### Styling
-Edit `style.css` to customize the appearance of rendered markdown.
-
-#### Markdown Processing
-Modify `components/MarkdownRenderer.svelte` to add or remove remark/rehype plugins.
-
-#### Sidebar Behavior
-Customize `components/Sidebar.svelte`, `OutlineTab.svelte`, or `FilesTab.svelte` for different layouts or features.
-
-## Browser Compatibility
-
-- **Chrome**: Fully supported (primary target)
-- **Edge**: Should work (Chromium-based)
-- **Other browsers**: Not tested, may require manifest adjustments
-
-## Known Limitations
-
-1. **File Discovery**: The "Files" tab currently has limited functionality due to browser security restrictions on local file access. Full directory browsing would require additional permissions or a native messaging host.
-
-2. **File Protocol**: The extension only works with `file://` URLs. It won't activate on `http://` or `https://` URLs.
-
-3. **Large Files**: Very large markdown files may take a moment to process.
-
-## Future Enhancements
-
-- [ ] Implement full directory file discovery (may require native messaging)
-- [ ] Add search functionality within documents
-- [ ] Export rendered HTML
-- [ ] Dark mode support
-- [ ] Customizable themes
-- [ ] Bookmark/favorites system
-- [ ] Recent files history
-
-## Contributing
-
-Contributions are welcome! Some areas for improvement:
-- Enhanced file system integration
-- Additional markdown plugins
-- Performance optimizations
-- UI/UX improvements
-- Documentation
-
-## License
-
-This project is provided as-is for educational and personal use.
-
-## Credits
-
-Built with:
-- [Svelte](https://svelte.dev/)
-- [Unified](https://unifiedjs.com/)
-- [Highlight.js](https://highlightjs.org/)
-- [Font Awesome](https://fontawesome.com/)
-
----
-
-**Note**: This is a rewrite of the original JavaScript-based extension, now using Svelte for better component architecture and maintainability.
-</file>
-
 <file path="style.css">
+:root {
+  --sym: "Symbols Nerd Font";
+  --sans: Finder, var(--sym), -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: "AptosMono Nerd Font", "SFMono Nerd Font", monospace;
+  --borderLight: 1px solid #e0e0e020;
+  --premShadow: 0 2px 4px rgba(0, 0, 0, 0.35), 0 8px 18px rgba(0, 0, 0, 0.45),
+    0 16px 40px rgba(0, 0, 0, 0.55);
+}
+::webkit-scrollbar {
+  display: none;
+}
 /* Global Styles */
 * {
   box-sizing: border-box;
+  text-rendering: optimizeLegibility;
+  letter-spacing: 0.05px;
 }
-
 body {
   margin: 0;
   padding: 0;
-  font-family: "Zed Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--sans);
   font-size: 16px;
   line-height: 1.6;
-  color: #24292f;
-  background: #ffffff;
+  color: #e0e0e0dd;
+  background: #0d1117;
 }
-
 /* Markdown Content Styles */
 #markdown-content-container {
   max-width: 900px;
   margin: 0 auto;
   padding: 40px 20px;
 }
-
 /* Headings */
 #markdown-content-container h1,
 #markdown-content-container h2,
@@ -3810,36 +1849,29 @@ body {
   line-height: 1.25;
   position: relative;
 }
-
 #markdown-content-container h1 {
   font-size: 2em;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: var(--borderLight);
   padding-bottom: 0.3em;
 }
-
 #markdown-content-container h2 {
   font-size: 1.5em;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: var(--borderLight);
   padding-bottom: 0.3em;
 }
-
 #markdown-content-container h3 {
   font-size: 1.25em;
 }
-
 #markdown-content-container h4 {
   font-size: 1em;
 }
-
 #markdown-content-container h5 {
   font-size: 0.875em;
 }
-
 #markdown-content-container h6 {
   font-size: 0.85em;
   color: #57606a;
 }
-
 /* Heading anchor links */
 .heading-anchor-link {
   position: absolute;
@@ -3850,7 +1882,6 @@ body {
   color: #0066cc;
   transition: opacity 0.2s ease;
 }
-
 h1:hover .heading-anchor-link,
 h2:hover .heading-anchor-link,
 h3:hover .heading-anchor-link,
@@ -3859,33 +1890,27 @@ h5:hover .heading-anchor-link,
 h6:hover .heading-anchor-link {
   opacity: 1;
 }
-
 /* Paragraphs and text */
 #markdown-content-container p {
   margin-top: 0;
   margin-bottom: 16px;
 }
-
 #markdown-content-container strong {
   font-weight: 600;
 }
-
 #markdown-content-container em {
   font-style: italic;
 }
-
 /* Links */
 #markdown-content-container a {
   color: #0066cc;
   text-decoration: none;
   transition: color 0.2s ease;
 }
-
 #markdown-content-container a:hover {
-  color: #0052a3;
-  text-decoration: underline;
+  color: #dda732;
+  text-decoration: none;
 }
-
 /* Lists */
 #markdown-content-container ul,
 #markdown-content-container ol {
@@ -3893,20 +1918,16 @@ h6:hover .heading-anchor-link {
   margin-bottom: 16px;
   padding-left: 2em;
 }
-
 #markdown-content-container li {
   margin-bottom: 4px;
 }
-
 #markdown-content-container li > p {
   margin-top: 16px;
 }
-
 /* Task lists */
 #markdown-content-container input[type="checkbox"] {
   margin-right: 8px;
 }
-
 /* Code */
 #markdown-content-container code {
   padding: 0.2em 0.4em;
@@ -3914,21 +1935,23 @@ h6:hover .heading-anchor-link {
   font-size: 85%;
   background-color: rgba(175, 184, 193, 0.2);
   border-radius: 6px;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-family: var(--mono);
 }
-
 /* Code blocks */
 #markdown-content-container pre {
   padding: 16px;
   overflow: auto;
   font-size: 85%;
   line-height: 1.45;
-  background-color: #f6f8fa;
+  background-color: #09090a;
   border-radius: 6px;
   margin-bottom: 16px;
   position: relative;
+  transition: all 125ms ease-in;
 }
-
+#markdown-content-container pre:hover {
+  box-shadow: var(--premShadow);
+}
 #markdown-content-container pre code {
   display: inline;
   padding: 0;
@@ -3939,70 +1962,60 @@ h6:hover .heading-anchor-link {
   background-color: transparent;
   border: 0;
 }
-
 /* Code block with language icon */
 pre.has-language {
-  padding-top: 40px;
+  padding-top: 26px !important;
 }
-
 .language-icon {
   position: absolute;
   top: 8px;
   left: 12px;
-  font-size: 16px;
+  font-size: 15px;
   color: #57606a;
   display: flex;
   align-items: center;
   gap: 6px;
 }
-
 /* Copy button */
 .copy-code-button {
   position: absolute;
   top: 8px;
   right: 8px;
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
+  background: rgba(255, 255, 255, 0);
+  border: 1px solid rgba(0, 0, 0, 0);
+  border-radius: 7px;
   padding: 6px 10px;
   cursor: pointer;
-  transition: all 0.2s ease;
   z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 125ms ease-in;
 }
-
 .copy-code-button:hover {
-  background: white;
+  background: #ffffff20;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-
 .copy-code-button.copied {
-  background: #d4edda;
+  background: #d4edda10;
   border-color: #28a745;
 }
-
 .copy-code-button svg {
   display: block;
 }
-
 /* Blockquotes */
 #markdown-content-container blockquote {
   margin: 0 0 16px 0;
   padding: 0 1em;
   color: #57606a;
-  border-left: 0.25em solid #d0d7de;
+  border-left: 0.25em solid #d0d7de50;
 }
-
 #markdown-content-container blockquote > :first-child {
   margin-top: 0;
 }
-
 #markdown-content-container blockquote > :last-child {
   margin-bottom: 0;
 }
-
 /* Tables */
 #markdown-content-container table {
   border-spacing: 0;
@@ -4013,27 +2026,22 @@ pre.has-language {
   overflow: auto;
   margin-bottom: 16px;
 }
-
 #markdown-content-container table th,
 #markdown-content-container table td {
   padding: 6px 13px;
-  border: 1px solid #d0d7de;
+  border: var(--borderLight);
 }
-
 #markdown-content-container table th {
   font-weight: 600;
   background-color: #f6f8fa;
 }
-
 #markdown-content-container table tr {
   background-color: #ffffff;
-  border-top: 1px solid #d0d7de;
+  border: var(--borderLight);
 }
-
 #markdown-content-container table tr:nth-child(2n) {
   background-color: #f6f8fa;
 }
-
 /* Horizontal rules */
 #markdown-content-container hr {
   height: 0.25em;
@@ -4042,15 +2050,13 @@ pre.has-language {
   background-color: #d0d7de;
   border: 0;
 }
-
 /* Images */
 #markdown-content-container img {
   max-width: 100%;
   height: auto;
-  border-radius: 6px;
+  border-radius: 9px;
   margin: 16px 0;
 }
-
 /* Admonitions */
 .admonition {
   padding: 16px;
@@ -4059,7 +2065,6 @@ pre.has-language {
   border-radius: 6px;
   background-color: #f6f8fa;
 }
-
 .admonition-title {
   display: flex;
   align-items: center;
@@ -4067,40 +2072,32 @@ pre.has-language {
   font-weight: 600;
   margin-bottom: 8px;
 }
-
 .admonition-icon {
   font-size: 18px;
 }
-
 .admonition-content {
   margin-left: 26px;
 }
-
 .admonition-content > :first-child {
   margin-top: 0;
 }
-
 .admonition-content > :last-child {
   margin-bottom: 0;
 }
-
 /* Text transformations */
 mark {
   background-color: #fff3cd;
   padding: 0.2em 0.4em;
   border-radius: 3px;
 }
-
 .suptext {
   font-size: 75%;
   vertical-align: super;
 }
-
 .subtext {
   font-size: 75%;
   vertical-align: sub;
 }
-
 /* Inserted text */
 ins {
   text-decoration: none;
@@ -4108,43 +2105,33 @@ ins {
   padding: 0.2em 0.4em;
   border-radius: 3px;
 }
-
 /* Syntax highlighting overrides */
 .hljs {
   background: transparent;
 }
-
 /* Responsive design */
 @media (max-width: 768px) {
   #markdown-content-container {
     padding: 20px 16px;
   }
-  
   #markdown-content-container h1 {
     font-size: 1.75em;
   }
-  
   #markdown-content-container h2 {
     font-size: 1.5em;
   }
-  
   #markdown-content-container pre {
     padding: 12px;
   }
 }
-
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
 }
-
 /* Selection */
 ::selection {
   background-color: rgba(0, 102, 204, 0.2);
 }
-</file>
-
-</files>
 </file>
 
 </files>
