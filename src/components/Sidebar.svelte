@@ -22,7 +22,7 @@
 
 <aside class="sidebar" class:open={sidebarOpen}>
   <div class="sidebar-header">
-    <h2>Sven</h2>
+    <h2></h2>
   </div>
 
   <div class="tabs">
