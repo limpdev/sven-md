@@ -19,19 +19,12 @@
 
   /* Syntax Highlighting Colors (GitHub Dark Dimmed style) */
   --hl-keyword: #ff7b72;
-  /* Red/Pink */
   --hl-function: #d2a8ff;
-  /* Purple */
   --hl-string: #a5d6ff;
-  /* Light Blue */
   --hl-variable: #79c0ff;
-  /* Blue */
   --hl-tag: #7ee787;
-  /* Green */
   --hl-comment: #8b949e;
-  /* Grey */
   --hl-constant: #79c0ff;
-  /* Blue */
   --hl-number: #79c0ff;
   --hl-attr: #79c0ff;
 
