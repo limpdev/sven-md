@@ -52,10 +52,6 @@
 
 <svelte:head>
   <meta charset="UTF-8" />
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
-  />
   <!-- style.css is bundled into content.css by Rollup -->
 </svelte:head>
 
@@ -107,7 +103,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 200ms var(--madSmooth);
   }
 
   .sidebar-toggle:hover {

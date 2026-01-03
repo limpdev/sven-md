@@ -36,6 +36,7 @@
   --hl-attr: #79c0ff;
 
   --shadow-medium: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  --madSmooth: cubic-bezier(0.165, 0.85, 0.45, 1);
 }
 
 /* Global Reset & Typography */
@@ -43,6 +44,7 @@
   box-sizing: border-box;
   text-rendering: optimizeLegibility;
   letter-spacing: 0.05px;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -123,29 +125,11 @@ h6 {
   font-style: italic;
 }
 
-/* Tables */
-#markdown-content-container table {
-  border-spacing: 0;
-  border-collapse: collapse;
-  width: 100%;
-  margin-bottom: 16px;
-}
-
-#markdown-content-container th,
-#markdown-content-container td {
-  padding: 6px 13px;
-  border: 1px solid var(--border-color);
-}
-
-#markdown-content-container tr:nth-child(2n) {
-  background-color: var(--bg-block);
-}
-
 /* Images */
 #markdown-content-container img {
   max-width: 100%;
   box-sizing: content-box;
-  background-color: #fff;
+  background-color: #ffffff30;
   /* Ensure transparent PNGs are visible */
   border-radius: 6px;
 }
@@ -263,11 +247,12 @@ pre.has-language {
   position: absolute;
   top: 8px;
   left: 12px;
-  font-size: 14px;
+  font-size: 12px !important;
   color: var(--text-secondary);
   font-family: var(--font-sans);
   font-weight: 600;
   text-transform: uppercase;
+  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -276,13 +261,13 @@ pre.has-language {
   position: absolute;
   top: 6px;
   right: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0);
+  border: 1px solid rgba(255, 255, 255, 0);
+  border-radius: 9px;
   color: var(--text-primary);
   padding: 4px 8px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 130ms var(--madSmooth);
   opacity: 0;
 }
 
@@ -291,7 +276,7 @@ pre:hover .copy-code-button {
 }
 
 .copy-code-button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 .copy-code-button.copied {
@@ -318,4 +303,75 @@ pre:hover .copy-code-button {
 
 .admonition-content {
   margin-left: 0;
+}
+
+/* TABLES */
+
+/* Scoped to your container */
+#markdown-content-container table {
+  /* Layout & Flow */
+  width: 95%;                /* Slightly less than 100% to provide the 'indent' look */
+  margin: 1.5rem auto;       /* Vertical spacing + 'auto' centers the table */
+  
+  /* Visuals */
+  border-collapse: collapse; /* Essential for clean borders */
+  background-color: #1a1a1a00;
+  color: #d0d0d0;
+  font-size: 0.95rem;        /* Slight reduction looks neater */
+  border-radius: 6px;
+}
+
+/* Header Styling */
+#markdown-content-container table th {
+  background-color: #2a2a2a;
+  color: #ffffff;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  
+  /* Borders: Bottom and Right only */
+  border-bottom: 1px solid #404040; /* Slightly thicker for header separation */
+  border-right: 1px solid #333333;
+  border-radius: 6px;
+}
+
+/* Body Cell Styling */
+#markdown-content-container table td {
+  padding: 12px 16px;
+  color: #d0d0d0;
+  
+  /* Borders: Bottom and Right only */
+  border-bottom: 1px solid #333333;
+  border-right: 1px solid #333333;
+}
+
+/* Alternating Row Colors (Zebra Striping) */
+#markdown-content-container table tbody tr:nth-child(even) {
+  background-color: #222222;
+}
+
+/* Hover Effect (Optional, nice for UX) */
+#markdown-content-container table tbody tr:hover {
+  background-color: #2d2d2d;
+}
+
+/* --- THE CLEANUP CREW --- */
+/* Remove borders from the far right column */
+#markdown-content-container table th:last-child,
+#markdown-content-container table td:last-child {
+  border-right: none;
+}
+
+/* Remove borders from the very bottom row */
+#markdown-content-container table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+#markdown-content-container table th, #markdown-content-container table td {
+  padding: 6px 13px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgb(208, 215, 222, 0.1) !important;
+  background-color: rgb(24, 24, 24) !important;
+  border-image: initial;
 }

@@ -1,5 +1,6 @@
 import App from './App.svelte'
 import './style.css'
+import './fontawe.css'
 
 // Wait for DOM to be ready
 function init () {
