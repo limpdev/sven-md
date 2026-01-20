@@ -273,6 +273,99 @@
       block.appendChild(btn);
     });
   }
+  /**
+   * Enhances <details> elements by wrapping their content for animation
+   * and adding smooth open/close listeners.
+   */
+  function enhanceDetailsElements() {
+    const detailsElements = document.querySelectorAll(
+      "#markdown-content-container details",
+    );
+
+    detailsElements.forEach((details) => {
+      // 1. Structure Check: Ensure there is a content wrapper
+      if (details.querySelector(".sven-details-content")) return; // Already processed
+
+      const summary = details.querySelector("summary");
+      if (!summary) return;
+
+      // Create wrapper div
+      const contentWrapper = document.createElement("div");
+      contentWrapper.className = "sven-details-content";
+
+      // Move all nodes after summary into wrapper
+      let nextSibling = summary.nextSibling;
+      while (nextSibling) {
+        const nodeToMove = nextSibling;
+        nextSibling = nextSibling.nextSibling;
+        contentWrapper.appendChild(nodeToMove);
+      }
+      details.appendChild(contentWrapper);
+
+      // 2. Animation Logic
+      summary.addEventListener("click", (e) => {
+        e.preventDefault(); // Stop default instant toggle
+
+        if (details.hasAttribute("open")) {
+          // CLOSING ANIMATION
+          // Lock current height
+          const startHeight = contentWrapper.offsetHeight;
+          contentWrapper.style.height = `${startHeight}px`;
+          contentWrapper.style.opacity = "1";
+
+          // Force reflow
+          void contentWrapper.offsetHeight;
+
+          // Animate to 0
+          requestAnimationFrame(() => {
+            contentWrapper.style.height = "0px";
+            contentWrapper.style.opacity = "0";
+          });
+
+          // Cleanup after transition
+          contentWrapper.addEventListener(
+            "transitionend",
+            function onEnd() {
+              details.removeAttribute("open");
+              contentWrapper.style.height = null;
+              contentWrapper.style.opacity = null;
+              contentWrapper.removeEventListener("transitionend", onEnd);
+            },
+            { once: true },
+          );
+        } else {
+          // OPENING ANIMATION
+          details.setAttribute("open", "");
+
+          // Determine target height
+          const targetHeight = contentWrapper.scrollHeight;
+
+          // Start from 0
+          contentWrapper.style.height = "0px";
+          contentWrapper.style.opacity = "0";
+
+          // Force reflow
+          void contentWrapper.offsetHeight;
+
+          // Animate to target
+          requestAnimationFrame(() => {
+            contentWrapper.style.height = `${targetHeight}px`;
+            contentWrapper.style.opacity = "1";
+          });
+
+          // Cleanup
+          contentWrapper.addEventListener(
+            "transitionend",
+            function onEnd() {
+              contentWrapper.style.height = null; // Release to auto
+              contentWrapper.removeEventListener("transitionend", onEnd);
+            },
+            { once: true },
+          );
+        }
+      });
+    });
+  }
 </script>
 
 {#if isProcessing}

@@ -1,23 +1,15 @@
 :root {
-  --font-sans: "Aptos Nerd Font", sans-serif;
-  --font-mono: "AptosMono Nerd Font", monospace;
-
-  /* Theme Colors (Dark Mode) */
-  --bg-body: #0d1117;
+  --bg-body: var(--bgLinear);
   --bg-sidebar: #010409;
   --bg-block: #161b22;
   --bg-code: #161b22;
-  /* distinct from block if needed */
-
+  --seethru: #00000000;
   --text-primary: #c9d1d9;
   --text-secondary: #8b949e;
   --text-link: #58a6ff;
   --text-link-hover: #79c0ff;
-
-  --border-color: #30363d00;
+  --border-color: #30363d10;
   --border-light: rgba(240, 246, 252, 0);
-
-  /* Syntax Highlighting Colors (GitHub Dark Dimmed style) */
   --hl-keyword: #ff7b72;
   --hl-function: #d2a8ff;
   --hl-string: #a5d6ff;
@@ -27,30 +19,104 @@
   --hl-constant: #79c0ff;
   --hl-number: #79c0ff;
   --hl-attr: #79c0ff;
-
-  --shadow-medium: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  --madSmooth: cubic-bezier(0.165, 0.85, 0.45, 1);
+  /* Typography */
+  --fontSans: Inter, "Symbols Nerd Font", sans-serif !important;
+  --fontAlt: Finder, "Symbols Nerd Font", sans-serif !important;
+  --fontPlay: Neco, "Symbols Nerd Font" !important;
+  --fontMono: "SFMono Nerd Font", monospace !important;
+  /* Font Sizes */
+  --sizeh1: 1.7rem;
+  --sizeh2: 1.6rem;
+  --sizeh3: 1.5rem;
+  --sizeh4: 1.4rem;
+  --sizebase: 1.3rem;
+  --sizeh5: 1.2rem;
+  --sizeh6: 1.1rem;
+  /* Colors */
+  --color-primary: hsl(39.38deg 22.33% 65.53% / 89%);
+  --color-positive: var(--color-primary);
+  --color-negative: hsl(0deg 38.01% 63.16%);
+  --link-hover: #cdb47f;
+  /* Border Radius */
+  --bdrRound: 16px;
+  --bdrCurve: 11px;
+  /* Effects */
+  --nuShadow: 0 0 0 1px rgba(255, 255, 255, 0.03), 0 12px 28px rgba(0, 0, 0, 0.6);
+  --ioease: cubic-bezier(0.165, 0.85, 0.45, 1);
+  /* Base Glass */
+  --glassBg: linear-gradient(135deg, rgba(10, 10, 10, 0.75), rgba(22, 22, 22, 0.85));
+  --glassBf: blur(10px) saturate(1.1);
+  --glassBlur: blur(12px) saturate(180%);
+  --bgLinear: linear-gradient(135deg, #0a0a0a 0%, #101010 45%, #161616 100%);
 }
 
-/* Global Reset & Typography */
-* {
+/* ============================================================================
+   GLOBAL RESET & UTILITIES
+   ============================================================================ */
+
+html {
   box-sizing: border-box;
-  text-rendering: optimizeLegibility;
-  letter-spacing: 0.05px;
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: var(--font-sans);
+  font-family: var(--fontSans);
   font-size: 16px;
   line-height: 1.6;
   color: var(--text-primary);
-  background: var(--bg-body);
+  background-color: var(--bg-body); /* Fallback */
 }
 
-/* --- Markdown Content Area --- */
+/* 
+   THEME CLASSES 
+   (Moved from components to here for centralization)
+*/
+
+/* 1. Main Background Gradient */
+.bgGradient {
+  background: var(--bgLinear);
+  background-attachment: fixed; /* Parallax-like feel */
+}
+
+/* 2. Frosty Glass Effect */
+.bgGlass {
+  background-color: rgba(13, 14, 17, 0.75); /* Semi-transparent dark */
+  backdrop-filter: var(--glassBlur);
+  -webkit-backdrop-filter: var(--glassBlur);
+  border-right: 1px solid var(--border-color);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+}
+
+/* 3. Button Styles (Sidebar Toggles, Tabs) */
+.sven-btn-icon {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 360ms var(--ioease);
+  border-radius: var(--bdrCurve);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sven-btn-icon:hover {
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.sven-btn-icon.active {
+  color: var(--text-link);
+  background-color: rgba(88, 166, 255, 0.1);
+  border-color: rgba(88, 166, 255, 0.2);
+}
+
+/* ============================================================================
+   MARKDOWN CONTENT STYLES
+   ============================================================================ */
+
 #markdown-content-container {
   max-width: 980px;
   margin: 0 auto;
@@ -58,17 +124,12 @@ body {
 }
 
 /* Headings */
-#markdown-content-container h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+#markdown-content-container h1, h2, h3, h4, h5, h6 {
   margin-top: 24px;
   margin-bottom: 16px;
   font-weight: 600;
   line-height: 1.25;
-  color: #e6edf3;
+  color: var(--text-primary);
 }
 
 #markdown-content-container h1 {
@@ -88,283 +149,195 @@ h6 {
   color: var(--text-link);
   text-decoration: none;
 }
-
 #markdown-content-container a:hover {
-  text-decoration: none;
-  color: var(--text-link-hover);
+  text-decoration: none !important;
 }
 
-/* Paragraphs & Lists */
-#markdown-content-container p {
-  margin-bottom: 16px;
-}
+/* Blocks */
+#markdown-content-container p { margin-bottom: 16px; }
+#markdown-content-container ul, 
+#markdown-content-container ol { padding-left: 2em; margin-bottom: 16px; }
 
-#markdown-content-container ul,
-#markdown-content-container ol {
-  padding-left: 2em;
-  margin-bottom: 16px;
-}
-
-#markdown-content-container li+li {
-  margin-top: 0.25em;
-}
-
-/* Blockquotes */
 #markdown-content-container blockquote {
   margin: 0 0 16px;
   padding: 0 1em;
   color: var(--text-secondary);
   border-left: 0.25em solid var(--border-color);
-  font-style: italic;
 }
 
 /* Images */
 #markdown-content-container img {
   max-width: 100%;
-  box-sizing: content-box;
-  background-color: #ffffff30;
-  /* Ensure transparent PNGs are visible */
-  border-radius: 6px;
-}
-
-/* --- Code & Syntax Highlighting --- */
-
-/* Inline Code */
-#markdown-content-container code {
-  padding: 0.2em 0.4em;
-  margin: 0;
-  font-size: 85%;
-  background-color: rgba(44, 44, 44, 0.4);
-  border-radius: 6px;
-  font-family: var(--font-mono);
+  border-radius: var(--bdrCurve);
+  background-color: transparent;
 }
 
 /* Code Blocks */
 #markdown-content-container pre {
-  padding: 20px;
+  padding: 16px;
   overflow: auto;
-  font-size: 87%;
+  font-size: 85%;
   line-height: 1.45;
   background-color: var(--bg-block);
-  border-radius: 9px;
-  margin-bottom: 16px;
+  border-radius: var(--bdrRound);
   border: 1px solid var(--border-color);
+  margin-bottom: 16px;
   position: relative;
-  /* Context for copy button */
 }
 
-#markdown-content-container pre code {
-  display: inline;
-  padding: 0;
+#markdown-content-container code {
+  font-family: var(--fontMono);
+}
+
+/* Inline Code */
+#markdown-content-container :not(pre) > code {
+  padding: 0.2em 0.4em;
   margin: 0;
-  overflow: visible;
-  line-height: inherit;
-  word-wrap: normal;
-  background-color: transparent;
-  border: 0;
+  font-size: 85%;
+  background-color: rgba(110, 118, 129, 0.4);
+  border-radius: var(--bdrRound);
 }
 
-/* Highlight.js Syntax Theme (Custom Mapping) */
-.hljs-comment,
-.hljs-quote {
-  color: var(--hl-comment);
-  font-style: italic;
-}
-
-.hljs-doctag,
-.hljs-keyword,
-.hljs-formula {
-  color: var(--hl-keyword);
-}
-
-.hljs-section,
-.hljs-name,
-.hljs-selector-tag,
-.hljs-deletion,
-.hljs-subst {
-  color: var(--hl-keyword);
-}
-
-.hljs-literal {
-  color: var(--hl-constant);
-}
-
-.hljs-string,
-.hljs-regexp,
-.hljs-addition,
-.hljs-attribute,
-.hljs-meta .hljs-string {
-  color: var(--hl-string);
-}
-
-.hljs-attr,
-.hljs-variable,
-.hljs-template-variable,
-.hljs-type,
-.hljs-selector-class,
-.hljs-selector-attr,
-.hljs-selector-pseudo,
-.hljs-number {
-  color: var(--hl-variable);
-}
-
-.hljs-symbol,
-.hljs-bullet,
-.hljs-link,
-.hljs-meta,
-.hljs-selector-id,
-.hljs-title {
-  color: var(--hl-function);
-}
-
-.hljs-built_in,
-.hljs-title.class_,
-.hljs-class .hljs-title {
-  color: var(--hl-constant);
-}
-
-.hljs-emphasis {
-  font-style: italic;
-}
-
-.hljs-strong {
-  font-weight: bold;
-}
-
-/* Language Icons */
-pre.has-language {
-  padding-top: 32px !important;
-}
-
-.language-icon {
+/* Language Badges & Copy Buttons (Injected via JS) */
+.has-language > .language-icon {
+  display: inline-block;
   position: absolute;
-  top: 8px;
-  left: 12px;
-  font-size: 12px !important;
-  color: var(--text-secondary);
-  font-family: var(--font-sans);
-  font-weight: 600;
-  text-transform: uppercase;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-/* Copy Button */
-.copy-code-button {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  background-color: rgba(255, 255, 255, 0);
-  border: 1px solid rgba(255, 255, 255, 0);
-  border-radius: 9px;
-  color: var(--text-primary);
+  justify-self: right;
+  margin: 1em 6em;
+  top: 0;
+  right: 0;
   padding: 4px 8px;
-  cursor: pointer;
-  transition: all 130ms var(--madSmooth);
-  opacity: 0;
+  font-size: 0.75em;
+  color: var(--text-secondary);
+  text-transform: lowercase;
+  background: var(--seethru);
+  border-bottom-left-radius: 6px;
+  border-left: 1px solid var(--seethru);
+  border-bottom: 1px solid var(--seethru);
 }
 
-pre:hover .copy-code-button {
-  opacity: 1;
-}
-
-.copy-code-button:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-}
-
-.copy-code-button.copied {
-  border-color: var(--hl-tag);
-  color: var(--hl-tag);
-}
-
-/* --- Admonitions --- */
+/* Admonitions */
 .admonition {
   padding: 16px;
   margin-bottom: 16px;
-  border-left: 4px solid;
-  border-radius: 6px;
+  border-left: 4px solid var(--text-link);
+  background-color: rgba(56, 139, 253, 0.1);
+  border-radius: 0 6px 6px 0;
+}
+.admonition-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.admonition-note { border-color: #58a6ff; background: rgba(56, 139, 253, 0.1); }
+.admonition-tip { border-color: #3fb950; background: rgba(46, 160, 67, 0.1); }
+.admonition-warning { border-color: #d29922; background: rgba(187, 128, 9, 0.1); }
+.admonition-important { border-color: #8957e5; background: rgba(137, 87, 229, 0.1); }
+.admonition-caution { border-color: #f85149; background: rgba(248, 81, 73, 0.1); }
+
+/* Tables */
+#markdown-content-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+#markdown-content-container table th,
+#markdown-content-container table td {
+  padding: 6px 13px;
+  border: 1px solid var(--border-color);
+}
+
+#markdown-content-container table tr:nth-child(2n) {
   background-color: var(--bg-block);
 }
 
-.admonition-title {
+/* ============================================================================
+   DETAILS & SUMMARY (ACCORDION) STYLES
+   ============================================================================ */
+
+/* The Container */
+#markdown-content-container details {
+  background-color: var(--bg-block);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  overflow: hidden; /* Clips the content during animation */
+  transition: border-color 0.2s ease;
+}
+
+#markdown-content-container details[open] {
+  border-color: var(--border-highlight);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* The Button (Summary) */
+#markdown-content-container summary {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.admonition-content {
-  margin-left: 0;
-}
-
-/* TABLES */
-
-/* Scoped to your container */
-#markdown-content-container table {
-  /* Layout & Flow */
-  width: 95%;                /* Slightly less than 100% to provide the 'indent' look */
-  margin: 1.5rem auto;       /* Vertical spacing + 'auto' centers the table */
-  
-  /* Visuals */
-  border-collapse: collapse; /* Essential for clean borders */
-  background-color: #1a1a1a00;
-  color: #d0d0d0;
-  font-size: 0.95rem;        /* Slight reduction looks neater */
-  border-radius: 6px;
-}
-
-/* Header Styling */
-#markdown-content-container table th {
-  background-color: #2a2a2a;
-  color: #ffffff;
+  padding: 12px 16px;
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.02);
+  user-select: none;
+  list-style: none; /* Hide default triangle */
+  outline: none;
   font-weight: 600;
-  text-align: left;
-  padding: 12px 16px;
-  
-  /* Borders: Bottom and Right only */
-  border-bottom: 1px solid #404040; /* Slightly thicker for header separation */
-  border-right: 1px solid #333333;
-  border-radius: 6px;
+  color: var(--text-primary);
+  transition: background-color 0.2s ease, transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
-/* Body Cell Styling */
-#markdown-content-container table td {
-  padding: 12px 16px;
-  color: #d0d0d0;
-  
-  /* Borders: Bottom and Right only */
-  border-bottom: 1px solid #333333;
-  border-right: 1px solid #333333;
+/* Hide default marker in Webkit */
+#markdown-content-container summary::-webkit-details-marker {
+  display: none;
 }
 
-/* Alternating Row Colors (Zebra Striping) */
-#markdown-content-container table tbody tr:nth-child(even) {
-  background-color: #222222;
+/* Hover State */
+#markdown-content-container summary:hover {
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
-/* Hover Effect (Optional, nice for UX) */
-#markdown-content-container table tbody tr:hover {
-  background-color: #2d2d2d;
+/* The "Squishy" Click Effect */
+#markdown-content-container summary:active {
+  transform: scale(0.985); /* Subtle shrink */
+  background-color: rgba(255, 255, 255, 0.08);
 }
 
-/* --- THE CLEANUP CREW --- */
-/* Remove borders from the far right column */
-#markdown-content-container table th:last-child,
-#markdown-content-container table td:last-child {
-  border-right: none;
+/* Custom Chevron Icon */
+#markdown-content-container summary::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-left: auto; /* Push to right */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.7;
 }
 
-/* Remove borders from the very bottom row */
-#markdown-content-container table tbody tr:last-child td {
-  border-bottom: none;
+#markdown-content-container details[open] > summary::after {
+  transform: rotate(180deg);
+  stroke: var(--text-primary);
+  opacity: 1;
 }
 
-#markdown-content-container table th, #markdown-content-container table td {
-  padding: 6px 13px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: rgb(208, 215, 222, 0.1) !important;
-  background-color: rgb(24, 24, 24) !important;
-  border-image: initial;
+/* The Content Wrapper (Added by JS) */
+.sven-details-content {
+  padding: 16px;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  background-color: transparent;
+  /* Animation props handled by JS, but set defaults */
+  transform-origin: top;
+  transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.3s ease;
+  overflow: hidden;
+}
+
+/* Fix for nested paragraphs within details */
+.sven-details-content > p:last-child {
+  margin-bottom: 0;
 }

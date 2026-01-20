@@ -5,19 +5,26 @@
 
   export let initialMarkdownContent = "";
 
+  // State
   let sidebarOpen = true;
   let currentFile = "";
   let documentOutline = [];
   let recentFiles = [];
-
-  // Use the passed content for initial render
   let markdownContent = initialMarkdownContent;
 
   onMount(() => {
     currentFile = window.location.href;
-    loadRecentFiles();
+    
+    // Restore sidebar state preference
+    if (localStorage.getItem("sven-sidebar-open") !== null) {
+      sidebarOpen = localStorage.getItem("sven-sidebar-open") === "true";
+    }
 
-    // Listen for storage changes to update list in realtime
+    loadRecentFiles();
+    setupStorageListener();
+  });
+
+  function setupStorageListener() {
     if (chrome && chrome.storage) {
       chrome.storage.onChanged.addListener((changes, area) => {
         if (area === "local" && changes.recents) {
@@ -25,7 +32,7 @@
         }
       });
     }
-  });
+  }
 
   function loadRecentFiles() {
     if (chrome && chrome.storage && chrome.storage.local) {
@@ -37,6 +44,7 @@
 
   function toggleSidebar() {
     sidebarOpen = !sidebarOpen;
+    localStorage.setItem("sven-sidebar-open", String(sidebarOpen));
   }
 
   function handleOutlineGenerated(event) {
@@ -44,20 +52,15 @@
   }
 
   function handleFileChange(event) {
-    const newFile = event.detail;
-    // For local files, we just change the window location
-    window.location.href = newFile;
+    window.location.href = event.detail;
   }
 </script>
 
-<svelte:head>
-  <meta charset="UTF-8" />
-  <!-- style.css is bundled into content.css by Rollup -->
-</svelte:head>
-
-<div class="app-container" class:sidebar-open={sidebarOpen}>
+<!-- The class 'bgGradient' pulls the heavy gradient styling from style.css -->
+<div class="app-container bgGradient" class:sidebar-open={sidebarOpen}>
+  
   <button
-    class="sidebar-toggle"
+    class="sidebar-toggle sven-btn-icon"
     on:click={toggleSidebar}
     aria-label="Toggle sidebar"
   >
@@ -81,45 +84,45 @@
 </div>
 
 <style>
+  /* Layout specific styles only. Visuals are in style.css */
   .app-container {
     display: flex;
     min-height: 100vh;
     position: relative;
-    background: var(--bg-body);
+    width: 100%;
+    overflow-x: hidden;
   }
 
   .sidebar-toggle {
     position: fixed;
     top: 20px;
     left: 20px;
-    z-index: 1001;
-    background: var(--bg-sidebar);
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    border-radius: 8px;
+    z-index: 1001; /* Above sidebar */
     width: 32px;
     height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 200ms var(--madSmooth);
+    background-color: var(--bg-block); /* Ensure visibility on top of glass */
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: all 200ms var(--ioease);
   }
-
   .sidebar-toggle:hover {
-    color: var(--text-primary);
-    background: var(--bg-block);
+    transform: scale(1.1);
+    transition: all 150ms var(--ioease);
+  }
+  .sidebar-toggle:active {
+    transform: scale(1.1,0.9);
   }
 
   .sidebar-open .sidebar-toggle {
     left: 320px;
+    transition: left 300ms var(--ioease);
   }
 
   .content-wrapper {
     flex: 1;
-    transition: margin-left 300ms ease-in-out;
-    margin-left: 0;
     width: 100%;
+    transition: margin-left 300ms var(--ioease);
+    margin-left: 0;
   }
 
   .sidebar-open .content-wrapper {

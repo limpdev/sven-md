@@ -24,13 +24,6 @@
 </script>
 
 <div class="files-tab">
-  <div class="info-box">
-    <i class="fas fa-info-circle"></i>
-    <p>
-      Browser security prevents scanning local folders. Showing recently visited
-      files instead.
-    </p>
-  </div>
 
   {#if recentFiles.length === 0}
     <div class="empty-state">
