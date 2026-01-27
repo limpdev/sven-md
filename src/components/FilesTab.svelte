@@ -24,7 +24,6 @@
 </script>
 
 <div class="files-tab">
-
   {#if recentFiles.length === 0}
     <div class="empty-state">
       <i class="fas fa-history"></i>
@@ -57,19 +56,6 @@
 <style>
   .files-tab {
     padding: 16px;
-  }
-
-  .info-box {
-    background: rgba(56, 139, 253, 0.1);
-    border: 1px solid rgba(56, 139, 253, 0.4);
-    border-radius: 6px;
-    padding: 12px;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    margin-bottom: 16px;
-    display: flex;
-    gap: 10px;
-    align-items: flex-start;
   }
 
   .files-header {

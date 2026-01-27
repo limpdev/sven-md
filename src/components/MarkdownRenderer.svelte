@@ -1,5 +1,5 @@
 <script>
-  import { onMount, createEventDispatcher } from "svelte";
+  import { createEventDispatcher, onMount } from "svelte";
 
   export let markdownContent = "";
 
@@ -66,6 +66,7 @@
         .use(modules.rehypeHighlight, { ignoreMissing: true })
         .use(rehypeCodeLanguageIcons)
         .use(rehypeAdmonitions)
+        .use(modules.rehypeSanitize)
         .use(modules.rehypeStringify, { allowDangerousHtml: true });
 
       const file = await processor.process(markdownContent);
@@ -105,6 +106,7 @@
       rehypeSlug,
       rehypeAutolinkHeadings,
       remarkGithubAdmonitionsToDirectives,
+      rehypeSanitize,
     ] = await Promise.all([
       import("unified"),
       import("remark-parse"),
@@ -123,6 +125,7 @@
       import("rehype-slug"),
       import("rehype-autolink-headings"),
       import("remark-github-admonitions-to-directives"),
+      import("rehype-sanitize"),
     ]);
 
     return {
@@ -144,6 +147,7 @@
       rehypeAutolinkHeadings: rehypeAutolinkHeadings.default,
       remarkGithubAdmonitionsToDirectives:
         remarkGithubAdmonitionsToDirectives.default,
+      rehypeSanitize: rehypeSanitize.default,
     };
   }
 

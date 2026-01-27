@@ -1,9 +1,9 @@
-import svelte from "rollup-plugin-svelte";
-import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
-import { terser } from "rollup-plugin-terser";
-import css from "rollup-plugin-css-only";
+import resolve from "@rollup/plugin-node-resolve";
 import copy from "rollup-plugin-copy";
+import css from "rollup-plugin-css-only";
+import svelte from "rollup-plugin-svelte";
+import { terser } from "rollup-plugin-terser";
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -46,7 +46,6 @@ export default [
         targets: [
           { src: "manifest.json", dest: "dist" },
           { src: "icons/*", dest: "dist/icons" },
-          // { src: "style.css", dest: "dist" },
         ],
       }),
     ],

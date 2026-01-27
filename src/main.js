@@ -1,6 +1,6 @@
 import App from './App.svelte'
-import './style.css'
 import './fontawe.css'
+import './style.css'
 
 // Wait for DOM to be ready
 function init () {
@@ -58,26 +58,53 @@ function updateRecentFiles () {
       lastVisited: Date.now()
     }
 
-    // Use local storage to persist recent files
-    if (chrome && chrome.storage && chrome.storage.local) {
-      chrome.storage.local.get({ recents: [] }, result => {
-        let recents = result.recents
+    // Cross-browser storage API support
+    // Firefox uses 'browser' (Promises), Chrome/Edge uses 'chrome' (Callbacks/Promises in MV3)
+    const storageApi = (typeof browser !== 'undefined' ? browser : chrome).storage
 
-        // Remove if exists (to move to top)
-        recents = recents.filter(f => f.path !== currentFile.path)
+    if (storageApi && storageApi.local) {
+      const resultOrPromise = storageApi.local.get({ recents: [] })
 
-        // Add to top
-        recents.unshift(currentFile)
-
-        // Keep max 20
-        recents = recents.slice(0, 20)
-
-        chrome.storage.local.set({ recents: recents })
-      })
+      if (resultOrPromise && typeof resultOrPromise.then === 'function') {
+        // Promise-based (Firefox / Chrome MV3)
+        resultOrPromise.then(result => {
+          handleRecents(result, currentFile, storageApi)
+        }).catch(e => {
+          console.error('Sven: Failed to get recent files', e)
+        })
+      } else {
+        // Callback-based (Chrome fallback)
+        // Note: In some contexts 'chrome' API might return undefined for the promise if callback is expected,
+        // though MV3 supports both.
+        storageApi.local.get({ recents: [] }, (result) => {
+          if (chrome.runtime.lastError) {
+             console.error('Sven: Storage error', chrome.runtime.lastError)
+             return
+          }
+          handleRecents(result, currentFile, storageApi)
+        })
+      }
     }
   } catch (e) {
     console.error('Sven: Failed to update recent files', e)
   }
+}
+
+function handleRecents (result, currentFile, api) {
+  if (!result || !api) return
+  
+  let recents = result.recents || []
+
+  // Remove if exists (to move to top)
+  recents = recents.filter(f => f.path !== currentFile.path)
+
+  // Add to top
+  recents.unshift(currentFile)
+
+  // Keep max 20
+  recents = recents.slice(0, 20)
+
+  api.local.set({ recents: recents })
 }
 
 // Initialize when DOM is ready
